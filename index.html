@@ -1,136 +1,235 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>الحقيبة الذكية</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تطبيق الحقيبة الذكية</title>
 
 <style>
+:root {
+    --primary: #1e3c72;
+    --secondary: #2a5298;
+    --accent: #00c6ff;
+}
+
 body {
     margin: 0;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     color: #fff;
+    overflow: hidden;
 }
 
 .app {
     width: 340px;
     height: 640px;
-    background: linear-gradient(180deg, #1e3c72, #2a5298);
-    border-radius: 30px;
-    padding: 20px;
-    box-shadow: 0 25px 45px rgba(0,0,0,0.45);
+    background: linear-gradient(180deg, var(--primary), var(--secondary));
+    border-radius: 40px;
+    padding: 25px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+    position: relative;
+    overflow-y: auto;
 }
 
-.header {
+/* شاشة الإعدادات الأولى */
+#setup-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
     text-align: center;
-    margin-bottom: 25px;
 }
 
-.header h1 {
-    font-size: 22px;
-    margin: 0;
+.input-group {
+    margin: 15px 0;
+    text-align: right;
 }
 
-.time {
-    font-size: 36px;
+input, select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    margin-top: 5px;
+    background: rgba(255,255,255,0.9);
+}
+
+.start-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 15px;
     font-weight: bold;
-    margin-top: 8px;
+    cursor: pointer;
+    margin-top: 20px;
 }
+
+/* الشاشة الرئيسية (مخفية في البداية) */
+#main-app {
+    display: none;
+}
+
+.header { text-align: center; margin-bottom: 20px; }
+.time { font-size: 32px; font-weight: bold; color: var(--accent); }
 
 .section {
-    background: rgba(255,255,255,0.15);
-    border-radius: 18px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 20px;
     padding: 15px;
-    margin-bottom: 14px;
-    backdrop-filter: blur(10px);
+    margin-bottom: 12px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: 0.3s;
 }
 
-.section h2 {
-    font-size: 14px;
-    margin-bottom: 6px;
-    color: #cce6ff;
+.section:hover { transform: scale(1.02); }
+
+.section h2 { font-size: 13px; margin: 0 0 8px 0; color: #add8e6; }
+.value { font-size: 22px; font-weight: bold; }
+
+.row { display: flex; gap: 10px; }
+.row div { flex: 1; }
+
+.mode { display: flex; justify-content: space-around; gap: 5px; }
+.mode div {
+    background: rgba(255,255,255,0.15);
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    cursor: pointer;
+    flex: 1;
+    text-align: center;
 }
 
-.value {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.row {
-    display: flex;
-    justify-content: space-between;
-}
+.mode div.active { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
 
 .status {
     text-align: center;
-    padding: 14px;
-    border-radius: 16px;
-    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    padding: 15px;
+    border-radius: 20px;
+    background: #28a745;
     font-weight: bold;
     margin-top: 10px;
 }
-
-.mode {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 10px;
-}
-
-.mode div {
-    background: rgba(255,255,255,0.2);
-    padding: 8px 14px;
-    border-radius: 12px;
-    font-size: 13px;
-}
 </style>
 </head>
-
 <body>
 
 <div class="app">
-    <div class="header">
-        <h1>🎒 الحقيبة الذكية</h1>
-        <div class="time">11:20</div>
-    </div>
-
-    <div class="section">
-        <h2>⚖️ وزن الحقيبة</h2>
-        <div class="value">4.3 كجم</div>
-    </div>
-
-    <div class="section">
-        <h2>✅ الحد الآمن</h2>
-        <div class="value">≤ 5.0 كجم</div>
-    </div>
-
-    <div class="section row">
-        <div>
-            <h2>🔋 البطارية</h2>
-            <div class="value">82%</div>
+    <div id="setup-screen">
+        <h1 style="font-size: 24px;">🎒 أهلاً بك في حقيبتك الذكية</h1>
+        <p style="font-size: 14px; opacity: 0.8;">لنقم بضبط الإعدادات الشخصية</p>
+        
+        <div class="input-group">
+            <label>الجنس:</label>
+            <select id="gender">
+                <option value="male">ذكر</option>
+                <option value="female">أنثى</option>
+            </select>
         </div>
-        <div>
-            <h2>📍 الموقع</h2>
-            <div class="value">آمن</div>
+        
+        <div class="input-group">
+            <label>العمر:</label>
+            <input type="number" id="age" placeholder="مثلاً: 17">
         </div>
+        
+        <div class="input-group">
+            <label>وزنك الشخصي (كجم):</label>
+            <input type="number" id="userWeight" placeholder="مثلاً: 60">
+        </div>
+
+        <button class="start-btn" onclick="startApp()">ابدأ تشغيل الحقيبة</button>
     </div>
 
-    <div class="section">
-        <h2>🧠 الوضع الذكي</h2>
-        <div class="mode">
-            <div>🎓 طالب</div>
-            <div>💼 عمل</div>
-            <div>✈️ سفر</div>
+    <div id="main-app">
+        <div class="header">
+            <div class="time" id="clock">12:00</div>
+            <h1 id="welcome-msg" style="font-size: 18px;">جاري التحميل...</h1>
         </div>
-    </div>
 
-    <div class="status">
-        ✔ الوزن مناسب – لا يوجد خطر
+        <div class="section">
+            <h2>⚖️ وزن الحقيبة الحالي</h2>
+            <div class="value" id="bagWeight">4.3 كجم</div>
+        </div>
+
+        <div class="row">
+            <div class="section">
+                <h2>🔋 البطارية</h2>
+                <div class="value">88%</div>
+            </div>
+            <div class="section">
+                <h2>📍 الموقع</h2>
+                <div class="value" style="font-size: 18px;">المنزل</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔥 السعرات المحروقة اليوم (أثناء الحمل)</h2>
+            <div class="value" id="calories">0 سعرة</div>
+        </div>
+
+        <div class="section">
+            <h2>🧠 اختر وضع الاستخدام</h2>
+            <div class="mode">
+                <div id="mode-student" class="active" onclick="setMode('طالب', 4.5, 5)">🎓 طالب</div>
+                <div id="mode-work" onclick="setMode('عمل', 3.2, 7)">💼 عمل</div>
+                <div id="mode-travel" onclick="setMode('سفر', 8.5, 10)">✈️ سفر</div>
+            </div>
+        </div>
+
+        <div class="status" id="status-bar">
+            ✔ الوزن مثالي للمستخدم
+        </div>
     </div>
 </div>
+
+<script>
+function startApp() {
+    const age = document.getElementById('age').value;
+    const weight = document.getElementById('userWeight').value;
+
+    if(!age || !weight) {
+        alert("يرجى إدخال البيانات لإكمال الإعداد");
+        return;
+    }
+
+    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('main-app').style.display = 'block';
+    document.getElementById('welcome-msg').innerText = "مرحباً بك (عمر " + age + ")";
+    
+    // حساب سعرات تخيلي بناءً على وزن المستخدم (cite: 1, 2)
+    const calValue = Math.round(weight * 0.5);
+    document.getElementById('calories').innerText = calValue + " سعرة";
+}
+
+function setMode(name, weight, limit) {
+    document.getElementById('bagWeight').innerText = weight + " كجم";
+    const status = document.getElementById('status-bar');
+    
+    // تحديث الأزرار
+    document.querySelectorAll('.mode div').forEach(el => el.classList.remove('active'));
+    event.target.classList.add('active');
+
+    if(weight > limit) {
+        status.innerText = "⚠️ وزن زائد عن وضع ال" + name;
+        status.style.background = "#dc3545";
+    } else {
+        status.innerText = "✔ الوزن مناسب لوضع ال" + name;
+        status.style.background = "#28a745";
+    }
+}
+
+// تحديث الوقت
+setInterval(() => {
+    const now = new Date();
+    document.getElementById('clock').innerText = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
+}, 1000);
+</script>
 
 </body>
 </html>
