@@ -1,234 +1,224 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تطبيق الحقيبة الذكية</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق الحقيبة الذكية Pro Max</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --accent: #38bdf8;
+            --glass: rgba(255, 255, 255, 0.08);
+            --card-bg: rgba(30, 41, 59, 0.8);
+        }
 
-<style>
-:root {
-    --primary: #1e3c72;
-    --secondary: #2a5298;
-    --accent: #00c6ff;
-}
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+        }
 
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    color: #fff;
-    overflow: hidden;
-}
+        .app-container {
+            width: 360px;
+            height: 700px;
+            background: var(--card-bg);
+            border-radius: 45px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(25px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
 
-.app {
-    width: 340px;
-    height: 640px;
-    background: linear-gradient(180deg, var(--primary), var(--secondary));
-    border-radius: 40px;
-    padding: 25px;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-    position: relative;
-    overflow-y: auto;
-}
+        .screen {
+            display: none;
+            flex-direction: column;
+            padding: 30px;
+            height: 100%;
+            animation: slideIn 0.4s ease-out;
+        }
 
-/* شاشة الإعدادات الأولى */
-#setup-screen {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-    text-align: center;
-}
+        .screen.active { display: flex; }
 
-.input-group {
-    margin: 15px 0;
-    text-align: right;
-}
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
 
-input, select {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    margin-top: 5px;
-    background: rgba(255,255,255,0.9);
-}
+        /* شاشة الترحيب */
+        #welcome { justify-content: center; text-align: center; }
+        .pulse-icon { font-size: 70px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-.start-btn {
-    background: var(--accent);
-    color: white;
-    border: none;
-    padding: 15px;
-    border-radius: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 20px;
-}
+        /* الأزرار */
+        .btn {
+            background: var(--accent);
+            color: #0f172a;
+            border: none;
+            padding: 16px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+        .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
 
-/* الشاشة الرئيسية (مخفية في البداية) */
-#main-app {
-    display: none;
-}
+        /* مدخلات البيانات */
+        .input-group { margin-bottom: 20px; }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.2);
+            color: white;
+            margin-top: 8px;
+        }
 
-.header { text-align: center; margin-bottom: 20px; }
-.time { font-size: 32px; font-weight: bold; color: var(--accent); }
+        /* الخريطة التخيلية */
+        .map-box {
+            height: 200px;
+            background: #1e293b url('https://api.placeholder.com/400/300') center/cover;
+            border-radius: 20px;
+            margin: 15px 0;
+            position: relative;
+            border: 2px solid var(--accent);
+        }
+        .marker {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            filter: drop-shadow(0 0 10px var(--accent));
+        }
 
-.section {
-    background: rgba(255,255,255,0.12);
-    border-radius: 20px;
-    padding: 15px;
-    margin-bottom: 12px;
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: 0.3s;
-}
-
-.section:hover { transform: scale(1.02); }
-
-.section h2 { font-size: 13px; margin: 0 0 8px 0; color: #add8e6; }
-.value { font-size: 22px; font-weight: bold; }
-
-.row { display: flex; gap: 10px; }
-.row div { flex: 1; }
-
-.mode { display: flex; justify-content: space-around; gap: 5px; }
-.mode div {
-    background: rgba(255,255,255,0.15);
-    padding: 10px;
-    border-radius: 12px;
-    font-size: 12px;
-    cursor: pointer;
-    flex: 1;
-    text-align: center;
-}
-
-.mode div.active { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
-
-.status {
-    text-align: center;
-    padding: 15px;
-    border-radius: 20px;
-    background: #28a745;
-    font-weight: bold;
-    margin-top: 10px;
-}
-</style>
+        /* لوحة التحكم */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .card { background: var(--glass); padding: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.05); }
+    </style>
 </head>
 <body>
 
-<div class="app">
-    <div id="setup-screen">
-        <h1 style="font-size: 24px;">🎒 أهلاً بك في حقيبتك الذكية</h1>
-        <p style="font-size: 14px; opacity: 0.8;">لنقم بضبط الإعدادات الشخصية</p>
-        
+<div class="app-container">
+    
+    <div class="screen active" id="sc1">
+        <div class="pulse-icon">🎒</div>
+        <h1 style="margin-top:0;">الحقيبة الذكية</h1>
+        <p style="opacity: 0.7;">أهلاً بك في الجيل القادم من الحقائب</p>
+        <button class="btn" onclick="showScreen('sc2')">ابدأ الإعداد</button>
+    </div>
+
+    <div class="screen" id="sc2">
+        <h2>ربط الجوال 📱</h2>
+        <p style="font-size: 14px; opacity: 0.8;">تأكد من تشغيل البلوتوث في حقيبتك</p>
+        <div id="loading" style="text-align: center; margin: 40px 0;">
+            <div style="font-size: 40px; animation: spin 2s linear infinite;">🔄</div>
+            <p>جاري البحث عن الحقيبة...</p>
+        </div>
+        <button class="btn" id="pairBtn" onclick="pairSuccess()">اتصال الآن</button>
+        <style>@keyframes spin { from {transform:rotate(0deg);} to {transform:rotate(360deg);} }</style>
+    </div>
+
+    <div class="screen" id="sc3">
+        <h2>ملف المستخدم 👤</h2>
         <div class="input-group">
-            <label>الجنس:</label>
-            <select id="gender">
-                <option value="male">ذكر</option>
-                <option value="female">أنثى</option>
+            <label>وزن جسمك (كجم)</label>
+            <input type="number" id="uWeight" placeholder="مثلاً: 60">
+        </div>
+        <div class="input-group">
+            <label>نوع الاستخدام</label>
+            <select id="uType">
+                <option value="مدرسة">🏫 مدرسة</option>
+                <option value="عمل">💼 عمل</option>
+                <option value="سفر">✈️ سفر</option>
             </select>
         </div>
-        
-        <div class="input-group">
-            <label>العمر:</label>
-            <input type="number" id="age" placeholder="مثلاً: 17">
-        </div>
-        
-        <div class="input-group">
-            <label>وزنك الشخصي (كجم):</label>
-            <input type="number" id="userWeight" placeholder="مثلاً: 60">
-        </div>
-
-        <button class="start-btn" onclick="startApp()">ابدأ تشغيل الحقيبة</button>
+        <button class="btn" onclick="finishSetup()">الدخول للوحة التحكم</button>
     </div>
 
-    <div id="main-app">
-        <div class="header">
-            <div class="time" id="clock">12:00</div>
-            <h1 id="welcome-msg" style="font-size: 18px;">جاري التحميل...</h1>
+    <div class="screen" id="sc4" style="padding: 20px; overflow-y: auto;">
+        <div style="display:flex; justify-content: space-between; align-items: center;">
+            <h3 id="bagTitle">حقيبة ذكية</h3>
+            <span style="background:var(--accent); color:#000; padding:4px 10px; border-radius:10px; font-size:12px; font-weight:bold;">متصل</span>
         </div>
 
-        <div class="section">
-            <h2>⚖️ وزن الحقيبة الحالي</h2>
-            <div class="value" id="bagWeight">4.3 كجم</div>
+        <div class="map-box">
+            <div class="marker">📍</div>
+            <div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.6); padding:5px 10px; border-radius:8px; font-size:11px;">موقع الحقيبة: حي الروضة</div>
         </div>
 
-        <div class="row">
-            <div class="section">
-                <h2>🔋 البطارية</h2>
-                <div class="value">88%</div>
+        <div class="dashboard-grid">
+            <div class="card">
+                <small>🔋 البطارية</small>
+                <div style="font-size: 20px; color: #22c55e;">94%</div>
             </div>
-            <div class="section">
-                <h2>📍 الموقع</h2>
-                <div class="value" style="font-size: 18px;">المنزل</div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>🔥 السعرات المحروقة اليوم (أثناء الحمل)</h2>
-            <div class="value" id="calories">0 سعرة</div>
-        </div>
-
-        <div class="section">
-            <h2>🧠 اختر وضع الاستخدام</h2>
-            <div class="mode">
-                <div id="mode-student" class="active" onclick="setMode('طالب', 4.5, 5)">🎓 طالب</div>
-                <div id="mode-work" onclick="setMode('عمل', 3.2, 7)">💼 عمل</div>
-                <div id="mode-travel" onclick="setMode('سفر', 8.5, 10)">✈️ سفر</div>
+            <div class="card">
+                <small>⚖️ الوزن</small>
+                <div style="font-size: 20px;">4.5 كجم</div>
             </div>
         </div>
 
-        <div class="status" id="status-bar">
-            ✔ الوزن مثالي للمستخدم
+        <div class="card" style="margin-top:10px;">
+            <div style="color: #ef4444; font-size: 14px; font-weight: bold;">⚠️ الحد الصحي الأقصى: <span id="maxVal">0</span> كجم</div>
+            <small style="opacity:0.6;">(بناءً على وزن جسمك)</small>
         </div>
+
+        <div class="card" style="margin-top:10px;">
+            <div style="display:flex; justify-content: space-between;">
+                <span>👣 الخطوات: <strong>2,140</strong></span>
+                <span>🔥 سعرات: <strong id="calVal">0</strong></span>
+            </div>
+        </div>
+
+        <h4 style="margin: 15px 0 10px 0;">أدوات التحكم</h4>
+        <div class="dashboard-grid">
+            <button class="btn-outline btn" onclick="alert('تم تفعيل إضاءة الحقيبة')">💡 إضاءة LED</button>
+            <button class="btn-outline btn" style="border-color:#ef4444; color:#ef4444;" onclick="alert('🚨 تم تفعيل إنذار السرقة!')">🚨 إنذار</button>
+        </div>
+
+        <button class="btn" onclick="location.reload()" style="width:100%; margin-top:20px; opacity:0.5;">إعادة الضبط</button>
     </div>
+
 </div>
 
 <script>
-function startApp() {
-    const age = document.getElementById('age').value;
-    const weight = document.getElementById('userWeight').value;
-
-    if(!age || !weight) {
-        alert("يرجى إدخال البيانات لإكمال الإعداد");
-        return;
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
     }
 
-    document.getElementById('setup-screen').style.display = 'none';
-    document.getElementById('main-app').style.display = 'block';
-    document.getElementById('welcome-msg').innerText = "مرحباً بك (عمر " + age + ")";
-    
-    // حساب سعرات تخيلي بناءً على وزن المستخدم (cite: 1, 2)
-    const calValue = Math.round(weight * 0.5);
-    document.getElementById('calories').innerText = calValue + " سعرة";
-}
-
-function setMode(name, weight, limit) {
-    document.getElementById('bagWeight').innerText = weight + " كجم";
-    const status = document.getElementById('status-bar');
-    
-    // تحديث الأزرار
-    document.querySelectorAll('.mode div').forEach(el => el.classList.remove('active'));
-    event.target.classList.add('active');
-
-    if(weight > limit) {
-        status.innerText = "⚠️ وزن زائد عن وضع ال" + name;
-        status.style.background = "#dc3545";
-    } else {
-        status.innerText = "✔ الوزن مناسب لوضع ال" + name;
-        status.style.background = "#28a745";
+    function pairSuccess() {
+        document.getElementById('loading').innerHTML = "<div style='font-size:40px;'>✅</div><p>تم الاتصال بنجاح!</p>";
+        setTimeout(() => showScreen('sc3'), 1500);
     }
-}
 
-// تحديث الوقت
-setInterval(() => {
-    const now = new Date();
-    document.getElementById('clock').innerText = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
-}, 1000);
+    function finishSetup() {
+        const weight = document.getElementById('uWeight').value;
+        const type = document.getElementById('uType').value;
+        
+        if(!weight) return alert("يرجى إدخال الوزن");
+
+        // الحسبة الصحية بناءً على وزنك (15%)
+        const maxSafe = (weight * 0.15).toFixed(1);
+        const calories = Math.round(weight * 0.7);
+
+        document.getElementById('maxVal').innerText = maxSafe;
+        document.getElementById('calVal').innerText = calories + " سعرة";
+        document.getElementById('bagTitle').innerText = "حقيبة " + type;
+
+        showScreen('sc4');
+    }
 </script>
 
 </body>
