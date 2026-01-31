@@ -10,6 +10,7 @@
             --accent: #38bdf8;
             --glass: rgba(255, 255, 255, 0.08);
             --card-bg: rgba(30, 41, 59, 0.8);
+            --danger: #ef4444;
         }
 
         body {
@@ -53,12 +54,7 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        /* شاشة الترحيب */
-        #welcome { justify-content: center; text-align: center; }
-        .pulse-icon { font-size: 70px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-
-        /* الأزرار */
+        /* الأزرار التفاعلية */
         .btn {
             background: var(--accent);
             color: #0f172a;
@@ -68,12 +64,49 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.2s all;
             margin-top: 15px;
         }
-        .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
 
-        /* مدخلات البيانات */
+        /* تأثير تغيير اللون عند الضغط */
+        .btn:active {
+            background: #0ea5e9;
+            transform: scale(0.95);
+        }
+
+        .btn-alarm {
+            background: transparent;
+            border: 2px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .btn-alarm:active {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* شاشة التنبيه (Modal) */
+        #alarmModal {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 30px;
+            text-align: center;
+            border: 1px solid var(--danger);
+            width: 100%;
+        }
+
         .input-group { margin-bottom: 20px; }
         input, select {
             width: 100%;
@@ -85,109 +118,89 @@
             margin-top: 8px;
         }
 
-        /* الخريطة التخيلية */
         .map-box {
-            height: 200px;
+            height: 180px;
             background: #1e293b url('https://api.placeholder.com/400/300') center/cover;
             border-radius: 20px;
             margin: 15px 0;
             position: relative;
-            border: 2px solid var(--accent);
-        }
-        .marker {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 30px;
-            filter: drop-shadow(0 0 10px var(--accent));
+            border: 1px solid var(--accent);
         }
 
-        /* لوحة التحكم */
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .card { background: var(--glass); padding: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.05); }
+        .card { background: var(--glass); padding: 15px; border-radius: 18px; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     
+    <div id="alarmModal">
+        <div class="modal-content">
+            <h3>🚨 نوع الإنذار</h3>
+            <p>اختر نوع التنبيه المطلوب تفعيله:</p>
+            <button class="btn" style="width:100%; margin-bottom:10px;" onclick="activateAlarm('سرقة')">📍 إنذار البعد (سرقة)</button>
+            <button class="btn" style="width:100%; background:#f59e0b;" onclick="activateAlarm('شحن منخفض')">🪫 إنذار الشحن المنخفض</button>
+            <button class="btn-alarm btn" style="width:100%; border:none; color:white; opacity:0.6;" onclick="closeAlarm()">إلغاء</button>
+        </div>
+    </div>
+    
     <div class="screen active" id="sc1">
-        <div class="pulse-icon">🎒</div>
-        <h1 style="margin-top:0;">الحقيبة الذكية</h1>
-        <p style="opacity: 0.7;">أهلاً بك في الجيل القادم من الحقائب</p>
+        <div style="font-size:70px; text-align:center; margin-bottom:20px;">🎒</div>
+        <h1 style="text-align:center;">الحقيبة الذكية</h1>
+        <p style="text-align:center; opacity:0.7;">أمانك وراحتك في تطبيق واحد</p>
         <button class="btn" onclick="showScreen('sc2')">ابدأ الإعداد</button>
     </div>
 
     <div class="screen" id="sc2">
         <h2>ربط الجوال 📱</h2>
-        <p style="font-size: 14px; opacity: 0.8;">تأكد من تشغيل البلوتوث في حقيبتك</p>
-        <div id="loading" style="text-align: center; margin: 40px 0;">
-            <div style="font-size: 40px; animation: spin 2s linear infinite;">🔄</div>
-            <p>جاري البحث عن الحقيبة...</p>
+        <div style="text-align: center; margin: 40px 0;">
+            <div id="spinIcon" style="font-size: 40px;">🔄</div>
+            <p id="statusTxt">جاري البحث عن البلوتوث...</p>
         </div>
         <button class="btn" id="pairBtn" onclick="pairSuccess()">اتصال الآن</button>
-        <style>@keyframes spin { from {transform:rotate(0deg);} to {transform:rotate(360deg);} }</style>
     </div>
 
     <div class="screen" id="sc3">
         <h2>ملف المستخدم 👤</h2>
         <div class="input-group">
             <label>وزن جسمك (كجم)</label>
-            <input type="number" id="uWeight" placeholder="مثلاً: 60">
+            <input type="number" id="uWeight" placeholder="أدخل وزنك..">
         </div>
-        <div class="input-group">
-            <label>نوع الاستخدام</label>
-            <select id="uType">
-                <option value="مدرسة">🏫 مدرسة</option>
-                <option value="عمل">💼 عمل</option>
-                <option value="سفر">✈️ سفر</option>
-            </select>
-        </div>
-        <button class="btn" onclick="finishSetup()">الدخول للوحة التحكم</button>
+        <button class="btn" onclick="finishSetup()">دخول لوحة التحكم</button>
     </div>
 
-    <div class="screen" id="sc4" style="padding: 20px; overflow-y: auto;">
+    <div class="screen" id="sc4" style="overflow-y: auto;">
         <div style="display:flex; justify-content: space-between; align-items: center;">
-            <h3 id="bagTitle">حقيبة ذكية</h3>
-            <span style="background:var(--accent); color:#000; padding:4px 10px; border-radius:10px; font-size:12px; font-weight:bold;">متصل</span>
+            <h3 id="bagTitle">لوحة التحكم</h3>
+            <span style="color:var(--accent); font-size:12px;">● متصل الآن</span>
         </div>
 
         <div class="map-box">
-            <div class="marker">📍</div>
-            <div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.6); padding:5px 10px; border-radius:8px; font-size:11px;">موقع الحقيبة: حي الروضة</div>
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:30px;">📍</div>
         </div>
 
         <div class="dashboard-grid">
-            <div class="card">
-                <small>🔋 البطارية</small>
-                <div style="font-size: 20px; color: #22c55e;">94%</div>
-            </div>
-            <div class="card">
-                <small>⚖️ الوزن</small>
-                <div style="font-size: 20px;">4.5 كجم</div>
-            </div>
+            <div class="card"><small>🔋 البطارية</small><div>94%</div></div>
+            <div class="card"><small>⚖️ الوزن الحالي</small><div>4.5 كجم</div></div>
         </div>
 
-        <div class="card" style="margin-top:10px;">
-            <div style="color: #ef4444; font-size: 14px; font-weight: bold;">⚠️ الحد الصحي الأقصى: <span id="maxVal">0</span> كجم</div>
-            <small style="opacity:0.6;">(بناءً على وزن جسمك)</small>
+        <div class="card" style="margin-top:10px; border-right: 4px solid var(--danger);">
+            <div style="color: var(--danger); font-size: 14px; font-weight: bold;">⚠️ الحد الأقصى الصحي: <span id="maxVal">0</span> كجم</div>
+            <small style="opacity:0.6;">(بناءً على وزنك لسلامة ظهرك)</small>
         </div>
 
         <div class="card" style="margin-top:10px;">
             <div style="display:flex; justify-content: space-between;">
-                <span>👣 الخطوات: <strong>2,140</strong></span>
+                <span>👣 الخطوات: 2,140</span>
                 <span>🔥 سعرات: <strong id="calVal">0</strong></span>
             </div>
         </div>
 
-        <h4 style="margin: 15px 0 10px 0;">أدوات التحكم</h4>
-        <div class="dashboard-grid">
-            <button class="btn-outline btn" onclick="alert('تم تفعيل إضاءة الحقيبة')">💡 إضاءة LED</button>
-            <button class="btn-outline btn" style="border-color:#ef4444; color:#ef4444;" onclick="alert('🚨 تم تفعيل إنذار السرقة!')">🚨 إنذار</button>
-        </div>
+        <h4 style="margin: 15px 0 10px 0;">الأمان والنظام</h4>
+        <button class="btn btn-alarm" style="width:100%; margin:0;" onclick="openAlarm()">🚨 تفعيل نظام الإنذار</button>
 
-        <button class="btn" onclick="location.reload()" style="width:100%; margin-top:20px; opacity:0.5;">إعادة الضبط</button>
+        <button class="btn" onclick="location.reload()" style="background:none; border:none; color:white; opacity:0.4; font-size:12px;">إعادة تعيين التطبيق</button>
     </div>
 
 </div>
@@ -199,25 +212,28 @@
     }
 
     function pairSuccess() {
-        document.getElementById('loading').innerHTML = "<div style='font-size:40px;'>✅</div><p>تم الاتصال بنجاح!</p>";
-        setTimeout(() => showScreen('sc3'), 1500);
+        document.getElementById('statusTxt').innerText = "تم الاتصال بنجاح!";
+        document.getElementById('spinIcon').innerHTML = "✅";
+        setTimeout(() => showScreen('sc3'), 1200);
     }
 
     function finishSetup() {
         const weight = document.getElementById('uWeight').value;
-        const type = document.getElementById('uType').value;
+        if(!weight) return alert("ادخل وزنك اولاً");
         
-        if(!weight) return alert("يرجى إدخال الوزن");
-
-        // الحسبة الصحية بناءً على وزنك (15%)
-        const maxSafe = (weight * 0.15).toFixed(1);
-        const calories = Math.round(weight * 0.7);
-
-        document.getElementById('maxVal').innerText = maxSafe;
-        document.getElementById('calVal').innerText = calories + " سعرة";
-        document.getElementById('bagTitle').innerText = "حقيبة " + type;
-
+        // الحسبة الصحية لوزن الحقيبة (لا يتجاوز 15% من وزن الجسم)
+        document.getElementById('maxVal').innerText = (weight * 0.15).toFixed(1);
+        document.getElementById('calVal').innerText = Math.round(weight * 0.7) + " سعرة";
         showScreen('sc4');
+    }
+
+    // وظائف الإنذار الجديدة
+    function openAlarm() { document.getElementById('alarmModal').style.display = 'flex'; }
+    function closeAlarm() { document.getElementById('alarmModal').style.display = 'none'; }
+    
+    function activateAlarm(type) {
+        alert("🚨 تم تفعيل إنذار ال" + type + " بنجاح!");
+        closeAlarm();
     }
 </script>
 
