@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق الحقيبة الذكية Ultimate</title>
+    <title>تطبيق الحقيبة الذكية Ultimate Pro</title>
     <style>
         :root {
             --bg: #0f172a;
             --accent: #38bdf8;
             --glass: rgba(255, 255, 255, 0.1);
-            --card-bg: rgba(30, 41, 59, 0.9);
+            --card-bg: rgba(30, 41, 59, 0.95);
             --danger: #ef4444;
         }
 
@@ -31,7 +31,7 @@
             background: var(--card-bg);
             border-radius: 45px;
             border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
             box-shadow: 0 30px 60px rgba(0,0,0,0.6);
             position: relative;
             overflow: hidden;
@@ -63,27 +63,147 @@
             cursor: pointer;
             transition: 0.3s;
             margin-top: 15px;
-            box-shadow: 0 0 0px rgba(56, 189, 248, 0);
         }
 
         .btn:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
             background: #7dd3fc;
-            box-shadow: 0 0 20px var(--accent); /* تأثير الإضاءة عند اللمس */
+            box-shadow: 0 0 25px var(--accent); /* توهج ناصح */
         }
 
-        .input-group { margin-bottom: 15px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 14px; opacity: 0.9; }
         input {
             width: 100%;
-            padding: 12px;
-            border-radius: 12px;
+            padding: 14px;
+            border-radius: 15px;
             border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.3);
             color: white;
-            margin-top: 5px;
             box-sizing: border-box;
+            font-size: 16px;
         }
 
         .map-box {
-            height: 150px;
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('
+            height: 160px;
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://api.placeholder.com/400/200') center/cover;
+            border-radius: 25px;
+            margin: 15px 0;
+            position: relative;
+            border: 1px solid var(--accent);
+        }
+
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .card { background: var(--glass); padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+
+        #alarmModal {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-content { background: #1e293b; padding: 25px; border-radius: 30px; text-align: center; width: 100%; border: 1px solid var(--danger); }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <div id="alarmModal">
+        <div class="modal-content">
+            <h3 style="color:var(--danger); margin-bottom:20px;">🚨 نظام الأمان والإنذار</h3>
+            <button class="btn" style="width:100%;" onclick="activateAlarm('السرقة والبعد')">📍 إنذار البعد (سرقة)</button>
+            <button class="btn" style="width:100%; background:#f59e0b;" onclick="activateAlarm('انخفاض الشحن')">🪫 إنذار شحن منخفض</button>
+            <button class="btn" style="width:100%; background:none; color:white; border:1px solid white;" onclick="closeAlarm()">إلغاء</button>
+        </div>
+    </div>
+
+    <div class="screen active" id="sc1">
+        <div style="font-size:70px; text-align:center; margin-top:60px;">🎒</div>
+        <h1 style="text-align:center; font-size: 26px;">مرحباً في تطبيق الحقيبة الذكية</h1>
+        <p style="text-align:center; opacity:0.8; line-height:1.6;">الجيل القادم من التكنولوجيا الشخصية لراحتك وأمانك الدائم.</p>
+        <button class="btn" onclick="showScreen('sc2')">ابدأ الآن</button>
+    </div>
+
+    <div class="screen" id="sc2">
+        <h2 style="text-align:center;">ملف المستخدم 👤</h2>
+        <div class="input-group">
+            <label>وزن جسمك (كجم)</label>
+            <input type="number" id="uWeight" placeholder="أدخل وزنك الحالي..">
+        </div>
+        <div class="input-group">
+            <label>العمر</label>
+            <input type="number" id="uAge" placeholder="أدخل عمرك..">
+        </div>
+        <button class="btn" onclick="finishSetup()">دخول لوحة التحكم</button>
+    </div>
+
+    <div class="screen" id="sc3" style="overflow-y: auto;">
+        <div style="display:flex; justify-content: space-between; align-items:center;">
+            <h3 style="margin:0;">لوحة التحكم</h3>
+            <div style="color:var(--accent); font-size:12px; font-weight:bold;">● متصل الآن</div>
+        </div>
+
+        <div class="map-box">
+            <div style="position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); font-size:35px; filter: drop-shadow(0 0 10px var(--accent));">📍</div>
+            <div style="position:absolute; bottom:0; width:100%; text-align:center; padding:8px 0; font-size:13px; background:rgba(15, 23, 42, 0.8); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;">
+                الموقع الحالي: <strong>حي الصهاريج</strong>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card"><small>🔋 البطارية</small><div style="font-size:20px; color:#22c55e; font-weight:bold;">96%</div></div>
+            <div class="card"><small>⚖️ الوزن الحالي</small><div style="font-size:20px; font-weight:bold;">4.5 كجم</div></div>
+        </div>
+
+        <div class="card" style="margin-top:12px; border-right: 5px solid var(--danger);">
+            <div style="color: var(--danger); font-size: 14px; font-weight: bold;">⚠️ الحد الأقصى الصحي: <span id="maxVal">0</span> كجم</div>
+            <small style="opacity:0.7;">(بناءً على وزنك وعمرك لحماية عمودك الفقري)</small>
+        </div>
+
+        <div class="dashboard-grid" style="margin-top:12px;">
+            <div class="card"><small>👣 الخطوات</small><div style="font-size:18px;">3,420</div></div>
+            <div class="card"><small>🔥 سعرات</small><div id="calVal" style="font-size:18px; color:#fbbf24;">0</div></div>
+        </div>
+
+        <h4 style="margin: 20px 0 10px 0; font-size:16px;">الأمان والنظام</h4>
+        <button class="btn" style="width:100%; background:transparent; border:2px solid var(--danger); color:var(--danger); margin:0;" onclick="openAlarm()">🚨 تفعيل نظام الإنذار</button>
+        
+        <button class="btn" onclick="location.reload()" style="background:none; border:none; color:white; opacity:0.4; font-size:11px; width:100%; margin-top:15px;">إعادة تعيين التطبيق</button>
+    </div>
+</div>
+
+<script>
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function finishSetup() {
+        const weight = document.getElementById('uWeight').value;
+        const age = document.getElementById('uAge').value;
+        
+        if(!weight || !age) return alert("فضلاً أدخل الوزن والعمر أولاً");
+
+        // المعادلة الصحية (15% من وزن الجسم كحد أقصى)
+        document.getElementById('maxVal').innerText = (weight * 0.15).toFixed(1);
+        // السعرات (تقديرية بناءً على العمر 17 والوزن)
+        document.getElementById('calVal').innerText = Math.round(weight * 0.8) + " سعرة";
+
+        showScreen('sc3');
+    }
+
+    function openAlarm() { document.getElementById('alarmModal').style.display = 'flex'; }
+    function closeAlarm() { document.getElementById('alarmModal').style.display = 'none'; }
+    function activateAlarm(type) {
+        alert("🚨 تم تفعيل إنذار " + type + " بنجاح!");
+        closeAlarm();
+    }
+</script>
+
+</body>
+</html>
