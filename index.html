@@ -53,6 +53,19 @@
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* تأثير الاهتزاز التفاعلي */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            50% { transform: translateX(8px); }
+            75% { transform: translateX(-8px); }
+            100% { transform: translateX(0); }
+        }
+
+        .shake-trigger {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
         .btn {
             background: var(--accent);
             color: #0f172a;
@@ -96,6 +109,16 @@
 
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card { background: var(--glass); padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+
+        .status-highlight {
+            margin-top: 12px;
+            padding: 20px;
+            border-radius: 25px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: all 0.5s ease;
+        }
 
         #alarmModal {
             display: none;
@@ -164,9 +187,9 @@
             <div class="card"><small>⚖️ وزن الحقيبة</small><div id="displayBagWeight" style="font-size:20px; font-weight:bold;">0 كجم</div></div>
         </div>
 
-        <div id="statusCard" class="card" style="margin-top:12px; border-right: 5px solid white;">
-            <div style="font-size: 14px; font-weight: bold;">الحالة: <span id="weightStatus">جاري الحساب..</span></div>
-            <small style="opacity:0.7;">بناءً على وزنك وعمرك لحماية عمودك الفقري</small>
+        <div id="statusCard" class="status-highlight">
+            <div style="font-size: 18px;">الحالة: <span id="weightStatus">جاري الحساب..</span></div>
+            <div id="weightDetailText" style="opacity:0.9; font-size: 12px; margin-top: 5px; font-weight: normal;">بناءً على وزنك وعمرك لحماية عمودك الفقري</div>
         </div>
 
         <div class="dashboard-grid" style="margin-top:12px;">
@@ -174,7 +197,7 @@
             <div class="card"><small>🔥 سعرات</small><div id="calVal" style="font-size:18px; color:#fbbf24;">0</div></div>
         </div>
 
-        <h4 style="margin: 20px 0 10px 0; font-size:16px;">الأمان والنظام</h4>
+        <h4 style="margin: 20px 0 10px 0; font-size:16px; text-align: center;">الأمان والنظام</h4>
         <button class="btn" style="width:100%; background:transparent; border:2px solid var(--danger); color:var(--danger); margin:0;" onclick="openAlarm()">🚨 تفعيل نظام الإنذار</button>
         
         <button class="btn" onclick="location.reload()" style="background:none; border:none; color:white; opacity:0.4; font-size:11px; width:100%; margin-top:15px;">إعادة تعيين التطبيق</button>
@@ -194,32 +217,31 @@
         
         if(!uWeight || !uAge || !bWeight) return alert("فضلاً عبئ جميع البيانات");
 
-        // تحديث عرض وزن الحقيبة في الواجهة
         document.getElementById('displayBagWeight').innerText = bWeight + " كجم";
 
-        // منطق تحديد الحالة (أخضر، برتقالي، أحمر)
-        // ممتاز: أقل من أو يساوي 10% من وزن الجسم
-        // جيد: بين 10% و 15% 
-        // خطر: أكثر من 15%
         const ratio = (bWeight / uWeight) * 100;
         const statusSpan = document.getElementById('weightStatus');
         const statusCard = document.getElementById('statusCard');
 
+        // إضافة كلاس الاهتزاز أولاً لإعادة تشغيله في كل مرة
+        statusCard.classList.remove('shake-trigger');
+        void statusCard.offsetWidth; // سطر سحري لإعادة تشغيل الـ Animation
+        statusCard.classList.add('shake-trigger');
+
         if(ratio <= 10) {
             statusSpan.innerText = "وزن ممتاز ✅";
-            statusSpan.style.color = "var(--success)";
-            statusCard.style.borderRightColor = "var(--success)";
+            statusCard.style.backgroundColor = "var(--success)";
+            statusCard.style.boxShadow = "0 0 25px rgba(34, 197, 94, 0.5)";
         } else if (ratio <= 15) {
             statusSpan.innerText = "جيد نوعاً ما ⚠️";
-            statusSpan.style.color = "var(--warning)";
-            statusCard.style.borderRightColor = "var(--warning)";
+            statusCard.style.backgroundColor = "var(--warning)";
+            statusCard.style.boxShadow = "0 0 25px rgba(245, 158, 11, 0.5)";
         } else {
             statusSpan.innerText = "خطر (ثقيلة جداً) 🚨";
-            statusSpan.style.color = "var(--danger)";
-            statusCard.style.borderRightColor = "var(--danger)";
+            statusCard.style.backgroundColor = "var(--danger)";
+            statusCard.style.boxShadow = "0 0 25px rgba(239, 68, 68, 0.5)";
         }
 
-        // السعرات (نفس معادلتك السابقة)
         document.getElementById('calVal').innerText = Math.round(uWeight * 0.8) + " سعرة";
 
         showScreen('sc3');
