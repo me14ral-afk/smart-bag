@@ -11,6 +11,8 @@
             --glass: rgba(255, 255, 255, 0.1);
             --card-bg: rgba(30, 41, 59, 0.95);
             --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #22c55e;
         }
 
         body {
@@ -51,7 +53,6 @@
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* تأثير التوهج عند الضغط */
         .btn {
             background: var(--accent);
             color: #0f172a;
@@ -68,7 +69,7 @@
         .btn:active {
             transform: scale(0.97);
             background: #7dd3fc;
-            box-shadow: 0 0 25px var(--accent); /* توهج ناصح */
+            box-shadow: 0 0 25px var(--accent);
         }
 
         .input-group { margin-bottom: 20px; }
@@ -112,7 +113,6 @@
 <body>
 
 <div class="app-container">
-    
     <div id="alarmModal">
         <div class="modal-content">
             <h3 style="color:var(--danger); margin-bottom:20px;">🚨 نظام الأمان والإنذار</h3>
@@ -139,6 +139,10 @@
             <label>العمر</label>
             <input type="number" id="uAge" placeholder="أدخل عمرك..">
         </div>
+        <div class="input-group">
+            <label>وزن الحقيبة الحالي (كجم)</label>
+            <input type="number" id="bWeight" placeholder="أدخل وزن الحقيبة الآن..">
+        </div>
         <button class="btn" onclick="finishSetup()">دخول لوحة التحكم</button>
     </div>
 
@@ -157,12 +161,12 @@
 
         <div class="dashboard-grid">
             <div class="card"><small>🔋 البطارية</small><div style="font-size:20px; color:#22c55e; font-weight:bold;">96%</div></div>
-            <div class="card"><small>⚖️ الوزن الحالي</small><div style="font-size:20px; font-weight:bold;">4.5 كجم</div></div>
+            <div class="card"><small>⚖️ وزن الحقيبة</small><div id="displayBagWeight" style="font-size:20px; font-weight:bold;">0 كجم</div></div>
         </div>
 
-        <div class="card" style="margin-top:12px; border-right: 5px solid var(--danger);">
-            <div style="color: var(--danger); font-size: 14px; font-weight: bold;">⚠️ الحد الأقصى الصحي: <span id="maxVal">0</span> كجم</div>
-            <small style="opacity:0.7;">(بناءً على وزنك وعمرك لحماية عمودك الفقري)</small>
+        <div id="statusCard" class="card" style="margin-top:12px; border-right: 5px solid white;">
+            <div style="font-size: 14px; font-weight: bold;">الحالة: <span id="weightStatus">جاري الحساب..</span></div>
+            <small style="opacity:0.7;">بناءً على وزنك وعمرك لحماية عمودك الفقري</small>
         </div>
 
         <div class="dashboard-grid" style="margin-top:12px;">
@@ -184,15 +188,39 @@
     }
 
     function finishSetup() {
-        const weight = document.getElementById('uWeight').value;
-        const age = document.getElementById('uAge').value;
+        const uWeight = parseFloat(document.getElementById('uWeight').value);
+        const uAge = document.getElementById('uAge').value;
+        const bWeight = parseFloat(document.getElementById('bWeight').value);
         
-        if(!weight || !age) return alert("فضلاً أدخل الوزن والعمر أولاً");
+        if(!uWeight || !uAge || !bWeight) return alert("فضلاً عبئ جميع البيانات");
 
-        // المعادلة الصحية (15% من وزن الجسم كحد أقصى)
-        document.getElementById('maxVal').innerText = (weight * 0.15).toFixed(1);
-        // السعرات (تقديرية بناءً على العمر 17 والوزن)
-        document.getElementById('calVal').innerText = Math.round(weight * 0.8) + " سعرة";
+        // تحديث عرض وزن الحقيبة في الواجهة
+        document.getElementById('displayBagWeight').innerText = bWeight + " كجم";
+
+        // منطق تحديد الحالة (أخضر، برتقالي، أحمر)
+        // ممتاز: أقل من أو يساوي 10% من وزن الجسم
+        // جيد: بين 10% و 15% 
+        // خطر: أكثر من 15%
+        const ratio = (bWeight / uWeight) * 100;
+        const statusSpan = document.getElementById('weightStatus');
+        const statusCard = document.getElementById('statusCard');
+
+        if(ratio <= 10) {
+            statusSpan.innerText = "وزن ممتاز ✅";
+            statusSpan.style.color = "var(--success)";
+            statusCard.style.borderRightColor = "var(--success)";
+        } else if (ratio <= 15) {
+            statusSpan.innerText = "جيد نوعاً ما ⚠️";
+            statusSpan.style.color = "var(--warning)";
+            statusCard.style.borderRightColor = "var(--warning)";
+        } else {
+            statusSpan.innerText = "خطر (ثقيلة جداً) 🚨";
+            statusSpan.style.color = "var(--danger)";
+            statusCard.style.borderRightColor = "var(--danger)";
+        }
+
+        // السعرات (نفس معادلتك السابقة)
+        document.getElementById('calVal').innerText = Math.round(uWeight * 0.8) + " سعرة";
 
         showScreen('sc3');
     }
