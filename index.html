@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق الحقيبة الذكية PRO</title>
+    <title>الحقيبة الذكية PRO</title>
     <style>
         :root {
-            --bg: #0f172a;
+            --bg: #0b1120;
             --accent: #38bdf8;
-            --glass: rgba(255, 255, 255, 0.1);
-            --card-bg: rgba(30, 41, 59, 0.95);
+            --glass: rgba(255, 255, 255, 0.07);
+            --card-bg: rgba(15, 23, 42, 0.9);
             --danger: #ef4444;
-            --warning: #f59e0b;
-            --success: #22c55e;
-            --indigo: #6366f1;
+            --warning: #fbbf24;
+            --success: #10b981;
+            --indigo: #818cf8;
         }
 
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: var(--bg);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -28,14 +28,28 @@
             overflow: hidden;
         }
 
+        /* خلفية تفاعلية */
+        .bg-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            filter: blur(120px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: move 10s infinite alternate;
+        }
+
+        @keyframes move { from { transform: translate(-50%, -50%); } to { transform: translate(50%, 50%); } }
+
         .app-container {
             width: 360px;
             height: 720px;
             background: var(--card-bg);
-            border-radius: 45px;
+            border-radius: 50px;
             border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(25px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            backdrop-filter: blur(30px);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
             position: relative;
             overflow: hidden;
             display: flex;
@@ -45,249 +59,199 @@
         .screen {
             display: none;
             flex-direction: column;
-            padding: 25px;
+            padding: 30px;
             height: 100%;
-            animation: fadeIn 0.4s ease-in-out;
+            animation: slideUp 0.5s ease-out;
             box-sizing: border-box;
         }
 
         .screen.active { display: flex; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* تأثير الاهتزاز */
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            50% { transform: translateX(8px); }
-            75% { transform: translateX(-8px); }
-            100% { transform: translateX(0); }
+        /* اهتزاز مؤقت (ثانيتين فقط) */
+        .shake-active {
+            animation: shake 0.4s ease-in-out 5; /* يهتز 5 مرات تقريباً ثانيتين */
         }
 
-        .shake-trigger { animation: shake 0.3s ease-in-out infinite; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
 
+        h1 { font-size: 28px; margin-bottom: 10px; background: linear-gradient(to left, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
         .btn {
-            background: var(--accent);
-            color: #0f172a;
+            background: linear-gradient(135deg, var(--accent), var(--indigo));
+            color: #0b1120;
             border: none;
-            padding: 16px;
-            border-radius: 20px;
-            font-size: 16px;
-            font-weight: bold;
+            padding: 18px;
+            border-radius: 22px;
+            font-size: 17px;
+            font-weight: 800;
             cursor: pointer;
             transition: 0.3s;
-            margin-top: 10px;
-            width: 100%;
+            box-shadow: 0 10px 20px rgba(56, 189, 248, 0.2);
         }
 
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--indigo);
-            color: white;
-            margin-top: 15px;
-        }
+        .btn:active { transform: scale(0.95); opacity: 0.9; }
 
-        .input-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-size: 14px; opacity: 0.9; }
+        .btn-secondary { background: var(--glass); color: white; border: 1px solid rgba(255,255,255,0.1); margin-top: 15px; }
+
         input, select {
             width: 100%;
-            padding: 14px;
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(0,0,0,0.3);
-            color: white;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-
-        .schedule-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+            padding: 16px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            overflow: hidden;
-        }
-        .schedule-table th, .schedule-table td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .schedule-table th { background: var(--indigo); font-size: 14px; }
-
-        .map-box {
-            height: 150px;
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://api.placeholder.com/400/200') center/cover;
-            border-radius: 25px;
-            margin: 15px 0;
-            position: relative;
-            border: 1px solid var(--accent);
+            color: white;
+            font-size: 16px;
+            margin-top: 8px;
+            outline: none;
         }
 
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: var(--glass); padding: 15px; border-radius: 20px; text-align: center; }
+        .card { background: var(--glass); padding: 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.05); }
 
-        .status-highlight {
-            margin: 15px 0;
+        .status-badge {
             padding: 20px;
-            border-radius: 25px;
+            border-radius: 30px;
             text-align: center;
             font-weight: bold;
-            transition: 0.5s;
+            margin: 20px 0;
+            font-size: 20px;
+        }
+
+        .schedule-list { list-style: none; padding: 0; }
+        .schedule-item { 
+            display: flex; justify-content: space-between; 
+            padding: 15px; background: var(--glass); 
+            margin-bottom: 8px; border-radius: 15px;
         }
     </style>
 </head>
 <body>
 
+<div class="bg-glow"></div>
+
 <div class="app-container">
     <div class="screen active" id="sc1">
-        <div style="font-size:80px; text-align:center; margin-top:80px;">🎒</div>
-        <h1 style="text-align:center;">الحقيبة الذكية PRO</h1>
-        <p style="text-align:center; opacity:0.7; padding: 0 20px;">نظامك الذكي لمراقبة الوزن والجدول الدراسي بدقة.</p>
-        <button class="btn" onclick="showScreen('sc2')" style="margin-top:auto; margin-bottom: 40px;">دخول النظام</button>
+        <div style="font-size:100px; text-align:center; margin-top:60px; filter: drop-shadow(0 0 20px var(--accent));">🎒</div>
+        <h1 style="text-align:center;">الحقيبة الذكية</h1>
+        <p style="text-align:center; opacity:0.8; line-height:1.6;">وجهتك نحو تطورٍ أذكي، لراحة ظهرك وأمان خطواتك كل يوم.</p>
+        <button class="btn" style="margin-top:auto; margin-bottom: 50px;" onclick="showScreen('sc2')">ابدأ الرحلة</button>
     </div>
 
     <div class="screen" id="sc2">
-        <h2 style="text-align:center;">الملف الشخصي 👤</h2>
-        <div class="input-group">
+        <h2>أهلاً بك 👋</h2>
+        <p style="opacity: 0.7; margin-bottom: 30px;">نحتاج لبعض التفاصيل لنخصص لك التجربة.</p>
+        <div style="margin-bottom: 20px;">
             <label>العمر</label>
             <input type="number" id="uAge" placeholder="أدخل عمرك">
         </div>
-        <div class="input-group">
+        <div style="margin-bottom: 20px;">
             <label>وزن جسمك (كجم)</label>
-            <input type="number" id="uWeight" placeholder="أدخل وزنك">
+            <input type="number" id="uWeight" placeholder="أدخل وزنك الحالي">
         </div>
-        <button class="btn" onclick="showScreen('sc3')" style="margin-top:auto; margin-bottom: 40px;">التالي</button>
+        <button class="btn" style="margin-top:auto; margin-bottom: 50px;" onclick="showScreen('sc3')">التالي</button>
     </div>
 
     <div class="screen" id="sc3">
-        <h2 style="text-align:center;">إعدادات الحقيبة ⚙️</h2>
-        <div class="input-group">
-            <label>اختر اليوم الدراسي</label>
+        <h2>تجهيز اليوم ⚖️</h2>
+        <div style="margin-bottom: 20px;">
+            <label>اليوم الدراسي</label>
             <select id="selectedDay">
-                <option value="الأحد">الأحد</option>
-                <option value="الاثنين">الاثنين</option>
-                <option value="الثلاثاء">الثلاثاء</option>
-                <option value="الأربعاء">الأربعاء</option>
-                <option value="الخميس">الخميس</option>
+                <option>الأحد</option>
+                <option>الاثنين</option>
+                <option>الثلاثاء</option>
+                <option>الأربعاء</option>
+                <option>الخميس</option>
             </select>
         </div>
-        <div class="input-group">
-            <label>وزن الحقيبة الحالي (كجم)</label>
-            <input type="number" id="bWeight" placeholder="أدخل وزن الحقيبة الآن">
+        <div style="margin-bottom: 20px;">
+            <label>وزن حقيبتك الآن</label>
+            <input type="number" id="bWeight" placeholder="أدخل الوزن بالكجم">
         </div>
-        
-        <button class="btn btn-outline" onclick="showScreen('sc4')">📅 جدولك الدراسي</button>
-        <button class="btn" onclick="processData()" style="margin-top:auto; margin-bottom: 40px;">تحليل الوزن والموقع</button>
+        <button class="btn btn-secondary" onclick="showScreen('sc4')">📅 جدولك الدراسي</button>
+        <button class="btn" style="margin-top:auto; margin-bottom: 50px;" onclick="runAnalysis()">التالي</button>
     </div>
 
     <div class="screen" id="sc4">
-        <h3 style="text-align:center;">تفاصيل الجدول الأسبوعي</h3>
-        <table class="schedule-table">
-            <thead>
-                <tr>
-                    <th>اليوم</th>
-                    <th>الوزن المتوقع</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>الأحد</td><td>5.0 كجم</td></tr>
-                <tr><td>الاثنين</td><td>4.5 كجم</td></tr>
-                <tr><td>الثلاثاء</td><td>4.0 كجم</td></tr>
-                <tr><td>الأربعاء</td><td>3.5 كجم</td></tr>
-                <tr><td>الخميس</td><td>2.5 كجم</td></tr>
-            </tbody>
-        </table>
-        <p style="font-size: 12px; text-align: center; color: var(--accent); margin-top: 15px;">* يتم حساب الوزن بناءً على الكتب والأنشطة.</p>
-        <button class="btn" onclick="showScreen('sc3')" style="margin-top:auto; margin-bottom: 40px;">العودة للتكملة</button>
+        <h2>الجدول الدراسي 🗓️</h2>
+        <div class="schedule-list">
+            <div class="schedule-item"><span>الأحد</span> <b>5.0 كجم</b></div>
+            <div class="schedule-item"><span>الاثنين</span> <b>4.5 كجم</b></div>
+            <div class="schedule-item"><span>الثلاثاء</span> <b>4.0 كجم</b></div>
+            <div class="schedule-item"><span>الأربعاء</span> <b>3.5 كجم</b></div>
+            <div class="schedule-item"><span>الخميس</span> <b>2.5 كجم</b></div>
+        </div>
+        <button class="btn" style="margin-top:auto; margin-bottom: 50px;" onclick="showScreen('sc3')">رجوع</button>
     </div>
 
-    <div class="screen" id="sc5" style="overflow-y: auto;">
-        <h3 id="dayTitle" style="margin:0; color: var(--accent);"></h3>
+    <div class="screen" id="sc5">
+        <h3 id="resDay" style="margin:0; color: var(--accent);"></h3>
         
-        <div class="map-box">
-            <div style="position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); font-size:30px; filter: drop-shadow(0 0 10px var(--accent));">📍</div>
-            <div style="position:absolute; bottom:0; width:100%; text-align:center; padding:8px 0; font-size:12px; background:rgba(15, 23, 42, 0.9);">
-                الموقع الحالي: <strong>حي الصهاريج</strong>
+        <div id="statusBox" class="status-badge">جاري التحليل...</div>
+
+        <div class="card" style="margin-bottom: 15px; text-align: center;">
+            <small style="opacity: 0.6;">الموقع الحالي</small>
+            <div style="font-size: 18px; margin-top: 5px;">📍 حي الصهاريج</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="card">
+                <small style="opacity: 0.6;">الخطوات</small>
+                <div style="font-size: 20px; font-weight: bold;">5,210</div>
+            </div>
+            <div class="card">
+                <small style="opacity: 0.6;">السعرات</small>
+                <div id="resCal" style="font-size: 20px; font-weight: bold; color: var(--warning);">0</div>
             </div>
         </div>
 
-        <div id="statusBox" class="status-highlight">
-            <div id="statusMainText" style="font-size: 18px;"></div>
-            <div id="statusSubText" style="font-size: 13px; font-weight: normal; margin-top: 5px;"></div>
-        </div>
-
-        <div class="dashboard-grid">
-            <div class="card"><small>👣 الخطوات</small><div style="font-size:18px;">4,850</div></div>
-            <div class="card"><small>🔥 سعرات</small><div id="calories" style="font-size:18px; color:var(--warning);">0</div></div>
-        </div>
-
-        <div class="card" style="margin-top:12px; width:100%; box-sizing: border-box;">
-            <small>⚖️ وزن الحقيبة المسجل</small>
-            <div id="finalBagWeight" style="font-size:20px; font-weight:bold;">0 كجم</div>
-        </div>
-
-        <button class="btn" onclick="location.reload()" style="background:none; border:none; color:white; opacity:0.4; font-size:12px; margin-top: 20px;">إعادة الضبط</button>
+        <button class="btn btn-secondary" style="margin-top:auto; margin-bottom: 50px;" onclick="location.reload()">إعادة تعيين</button>
     </div>
 </div>
 
 <script>
-    // الأوزان المتوقعة بناءً على الجدول الدراسي
-    const dailyExpectation = {
-        "الأحد": 5.0,
-        "الاثنين": 4.5,
-        "الثلاثاء": 4.0,
-        "الأربعاء": 3.5,
-        "الخميس": 2.5
-    };
+    const dayWeights = { "الأحد": 5.0, "الاثنين": 4.5, "الثلاثاء": 4.0, "الأربعاء": 3.5, "الخميس": 2.5 };
 
     function showScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
 
-    function processData() {
-        const uWeight = parseFloat(document.getElementById('uWeight').value);
-        const bWeight = parseFloat(document.getElementById('bWeight').value);
+    function runAnalysis() {
+        const uw = parseFloat(document.getElementById('uWeight').value);
+        const bw = parseFloat(document.getElementById('bWeight').value);
         const day = document.getElementById('selectedDay').value;
 
-        if(!uWeight || !bWeight) return alert("فضلاً أدخل جميع البيانات");
+        if(!uw || !bw) return alert("من فضلك أكمل البيانات");
 
-        const expected = dailyExpectation[day];
-        const statusBox = document.getElementById('statusBox');
-        const mainText = document.getElementById('statusMainText');
-        const subText = document.getElementById('statusSubText');
+        const expect = dayWeights[day];
+        const box = document.getElementById('statusBox');
+        document.getElementById('resDay').innerText = "تقرير يوم " + day;
+        document.getElementById('resCal').innerText = Math.round(uw * 0.9) + " kcal";
 
-        document.getElementById('dayTitle').innerText = "تقرير يوم " + day;
-        document.getElementById('finalBagWeight').innerText = bWeight + " كجم";
-        document.getElementById('calories').innerText = Math.round(uWeight * 0.85) + " سعرة";
+        // إزالة الاهتزاز إذا كان موجوداً
+        box.classList.remove('shake-active');
 
-        // إزالة أي اهتزاز سابق
-        statusBox.classList.remove('shake-trigger');
-
-        // منطق المقارنة (كلمة بكلمة كما طلبت)
-        if (bWeight <= expected) {
-            // مثالية - أخضر
-            mainText.innerText = "مثالية ✅";
-            subText.innerText = "وزن الحقيبة مطابق لجدول اليوم الدراسي.";
-            statusBox.style.backgroundColor = "var(--success)";
-            statusBox.style.color = "white";
-        } 
-        else if (bWeight <= expected + 1.5) {
-            // جيدة نوعاً ما - برتقالي + اهتزاز
-            mainText.innerText = "جيدة نوعاً ما ⚠️";
-            subText.innerText = "يرجى تعديل الحقيبة وإزالة الكتب الزائدة.";
-            statusBox.style.backgroundColor = "var(--warning)";
-            statusBox.style.color = "#000";
-            setTimeout(() => statusBox.classList.add('shake-trigger'), 100);
-        } 
-        else {
-            // خطيرة - أحمر + اهتزاز
-            mainText.innerText = "خطيرة جداً 🚨";
-            subText.innerText = "يجب تعديل الجدول فوراً، الوزن يضر ظهرك.";
-            statusBox.style.backgroundColor = "var(--danger)";
-            statusBox.style.color = "white";
-            setTimeout(() => statusBox.classList.add('shake-trigger'), 100);
+        if (bw <= expect) {
+            box.innerText = "مثالية ✅";
+            box.style.background = "var(--success)";
+            box.style.color = "white";
+        } else if (bw <= expect + 1.5) {
+            box.innerText = "جيدة نوعاً ما ⚠️";
+            box.style.background = "var(--warning)";
+            box.style.color = "#000";
+            // تشغيل الاهتزاز
+            setTimeout(() => box.classList.add('shake-active'), 100);
+        } else {
+            box.innerText = "خطيرة جداً 🚨";
+            box.style.background = "var(--danger)";
+            box.style.color = "white";
+            // تشغيل الاهتزاز
+            setTimeout(() => box.classList.add('shake-active'), 100);
         }
 
         showScreen('sc5');
