@@ -2,144 +2,85 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>واجهة السعرات - نظام متطور</title>
+    <title>تطبيقي للحقيبة الذكية</title>
     <style>
-        /* إعدادات الخلفية المتطورة */
-        body {
-            margin: 0;
-            background: #050505;
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(244, 63, 94, 0.15) 0px, transparent 50%);
-            color: #e2e8f0;
-            font-family: 'Inter', system-ui, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
+        :root { --p: #6366f1; --s: #f43f5e; --glass: rgba(255, 255, 255, 0.1); }
+        body { margin: 0; background: radial-gradient(circle at center, #1e1b4b, #0f172a); font-family: sans-serif; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+        
+        .container { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; width: 350px; padding: 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; }
+        .page { display: none; animation: fadeIn 0.4s ease; }
+        .active { display: block; }
+        
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; box-sizing: border-box; }
+        .btn { width: 100%; padding: 15px; border-radius: 50px; border: none; cursor: pointer; font-weight: bold; margin-top: 15px; color: white; transition: 0.3s; }
+        .btn-blue { background: linear-gradient(90deg, #4f46e5, #3b82f6); }
+        .btn-red { background: linear-gradient(90deg, #e11d48, #fb7185); }
+
+        /* الألوان والتنبيهات */
+        .ideal { color: #4ade80; }
+        .warning { color: #fbbf24; animation: shake 0.5s infinite; }
+        .danger { color: #f87171; animation: shake 0.3s infinite; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
-
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 2rem;
-            width: 90%;
-            max-width: 450px;
-            box-shadow: 0 0 40px rgba(0,0,0,0.5);
-        }
-
-        .title {
-            text-align: center;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(90deg, #818cf8, #fb7185);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* الجدول بنظام الشبكة المتطور */
-        .data-grid {
-            display: none; /* يظهر عند الضغط */
-            margin-top: 20px;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid rgba(129, 140, 248, 0.3);
-            animation: slideUp 0.5s ease-out;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        th {
-            background: rgba(129, 140, 248, 0.2);
-            padding: 12px;
-            font-size: 0.9rem;
-            color: #818cf8;
-        }
-
-        td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.85rem;
-        }
-
-        tr:hover { background: rgba(255, 255, 255, 0.05); }
-
-        /* الأزرار النيون */
-        .glow-btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-primary { background: #4f46e5; box-shadow: 0 0 15px rgba(79, 70, 229, 0.4); }
-        .btn-secondary { background: #e11d48; box-shadow: 0 0 15px rgba(225, 29, 72, 0.4); }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { border: 1px solid rgba(255,255,255,0.1); padding: 8px; }
     </style>
 </head>
 <body>
 
-<div class="glass-panel">
-    <div class="title">نظام الجدولة الأسبوعي</div>
-    
-    <div style="margin-bottom: 20px;">
-        <input type="number" placeholder="العمر" value="17" style="width: 90%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid #334155; border-radius: 8px; color: white; margin-bottom: 10px;">
-        <input type="number" placeholder="الوزن الحالي" style="width: 90%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid #334155; border-radius: 8px; color: white;">
+<div class="container">
+    <div id="p1" class="page active">
+        <div style="font-size: 50px;">🎒</div>
+        <h2>تفاصيل الجدول الأسبوعي</h2>
+        <p>مرحباً بك في تطبيق الحقيبة الذكية</p>
+        <button class="btn btn-blue" onclick="go(2)">ابدأ الآن</button>
     </div>
 
-    <button class="glow-btn btn-primary" onclick="toggleGrid()">
-        <span>🔓</span> عرض الجدول التفصيلي
-    </button>
-    
-    <button class="glow-btn btn-secondary">إعادة تعيين البيانات</button>
+    <div id="p2" class="page">
+        <h3>البيانات الشخصية</h3>
+        <input type="number" id="uAge" placeholder="العمر" value="17">
+        <input type="number" id="uWeight" placeholder="وزنك الحالي (كجم)">
+        <button class="btn btn-blue" onclick="go(3)">التالي</button>
+    </div>
 
-    <div class="data-grid" id="mainGrid">
-        <table>
-            <thead>
-                <tr>
-                    <th>اليوم</th>
-                    <th>السعرات</th>
-                    <th>الحالة</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>الأحد</td><td>2400</td><td>🔥 نشط</td></tr>
-                <tr><td>الاثنين</td><td>2200</td><td>⚡ تمرين</td></tr>
-                <tr><td>الثلاثاء</td><td>2400</td><td>🔥 نشط</td></tr>
-                <tr><td>الأربعاء</td><td>2200</td><td>⚡ تمرين</td></tr>
-                <tr><td>الخميس</td><td>2500</td><td>🏆 قمة</td></tr>
-            </tbody>
-        </table>
+    <div id="p3" class="page">
+        <h3>تفاصيل اليوم</h3>
+        <select id="uDay">
+            <option value="الأحد">الأحد</option>
+            <option value="الاثنين">الاثنين</option>
+            <option value="الثلاثاء">الثلاثاء</option>
+            <option value="الأربعاء">الأربعاء</option>
+            <option value="الخميس">الخميس</option>
+        </select>
+        <input type="number" id="bagWeight" placeholder="وزن حقيبتك الحالي (كجم)">
+        <button class="btn btn-blue" onclick="showSchedule()">جدولك الدراسي</button>
+    </div>
+
+    <div id="p4" class="page">
+        <h3>الجدول الدراسي والوزن المتوقع</h3>
+        <div id="scheduleOutput"></div>
+        <button class="btn btn-blue" onclick="calculateResult()">التالي (النتيجة النهائية)</button>
+    </div>
+
+    <div id="p5" class="page">
+        <h3>التحليل النهائي</h3>
+        <p>الموقع: حي الصهاريج</p>
+        <div id="finalStatus" style="font-size: 20px; font-weight: bold; padding: 15px;"></div>
+        <hr>
+        <p>السعرات المحروقة التقريبية: <span id="calBurned">...</span></p>
+        <button class="btn btn-red" onclick="go(1)">إعادة من جديد</button>
     </div>
 </div>
 
 <script>
-    function toggleGrid() {
-        const grid = document.getElementById('mainGrid');
-        grid.style.display = grid.style.display === 'block' ? 'none' : 'block';
-    }
-</script>
-
-</body>
-</html>
+    const scheduleData = {
+        "الأحد": { subjects: "رياضيات، فيزياء، دين", expected: 5 },
+        "الاثنين": { subjects: "كيمياء، إنجليزي، بدنية", expected: 4 },
+        "الثلاثاء": { subjects: "أحياء، حاسب، تاريخ", expected: 6 },
+        "الأربعاء": { subjects: "ل
