@@ -2,259 +2,142 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الحقيبة الذكية PRO</title>
+    <title>واجهة السعرات - نظام متطور</title>
     <style>
-        :root {
-            --bg: #0b1120;
-            --accent: #38bdf8;
-            --glass: rgba(255, 255, 255, 0.07);
-            --card-bg: rgba(15, 23, 42, 0.9);
-            --danger: #ef4444;
-            --warning: #fbbf24;
-            --success: #10b981;
-            --indigo: #818cf8;
-        }
-
+        /* إعدادات الخلفية المتطورة */
         body {
             margin: 0;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: radial-gradient(circle at top right, #1e293b, #0f172a);
-            height: 100vh;
+            background: #050505;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(244, 63, 94, 0.15) 0px, transparent 50%);
+            color: #e2e8f0;
+            font-family: 'Inter', system-ui, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, #818cf8, #fb7185);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* الجدول بنظام الشبكة المتطور */
+        .data-grid {
+            display: none; /* يظهر عند الضغط */
+            margin-top: 20px;
+            border-radius: 12px;
             overflow: hidden;
-        }
-
-        /* خلفية تفاعلية */
-        .bg-glow {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: var(--accent);
-            filter: blur(120px);
-            opacity: 0.15;
-            z-index: -1;
-            animation: move 10s infinite alternate;
-        }
-
-        @keyframes move { from { transform: translate(-50%, -50%); } to { transform: translate(50%, 50%); } }
-
-        .app-container {
-            width: 360px;
-            height: 720px;
-            background: var(--card-bg);
-            border-radius: 50px;
-            border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(30px);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .screen {
-            display: none;
-            flex-direction: column;
-            padding: 30px;
-            height: 100%;
+            border: 1px solid rgba(129, 140, 248, 0.3);
             animation: slideUp 0.5s ease-out;
-            box-sizing: border-box;
         }
 
-        .screen.active { display: flex; }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* اهتزاز مؤقت (ثانيتين فقط) */
-        .shake-active {
-            animation: shake 0.4s ease-in-out 5; /* يهتز 5 مرات تقريباً ثانيتين */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.03);
         }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-6px); }
-            75% { transform: translateX(6px); }
+        th {
+            background: rgba(129, 140, 248, 0.2);
+            padding: 12px;
+            font-size: 0.9rem;
+            color: #818cf8;
         }
 
-        h1 { font-size: 28px; margin-bottom: 10px; background: linear-gradient(to left, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        .btn {
-            background: linear-gradient(135deg, var(--accent), var(--indigo));
-            color: #0b1120;
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85rem;
+        }
+
+        tr:hover { background: rgba(255, 255, 255, 0.05); }
+
+        /* الأزرار النيون */
+        .glow-btn {
+            width: 100%;
+            padding: 12px;
             border: none;
-            padding: 18px;
-            border-radius: 22px;
-            font-size: 17px;
-            font-weight: 800;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
             cursor: pointer;
             transition: 0.3s;
-            box-shadow: 0 10px 20px rgba(56, 189, 248, 0.2);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
 
-        .btn:active { transform: scale(0.95); opacity: 0.9; }
+        .btn-primary { background: #4f46e5; box-shadow: 0 0 15px rgba(79, 70, 229, 0.4); }
+        .btn-secondary { background: #e11d48; box-shadow: 0 0 15px rgba(225, 29, 72, 0.4); }
 
-        .btn-secondary { background: var(--glass); color: white; border: 1px solid rgba(255,255,255,0.1); margin-top: 15px; }
-
-        input, select {
-            width: 100%;
-            padding: 16px;
-            border-radius: 18px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05);
-            color: white;
-            font-size: 16px;
-            margin-top: 8px;
-            outline: none;
-        }
-
-        .card { background: var(--glass); padding: 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.05); }
-
-        .status-badge {
-            padding: 20px;
-            border-radius: 30px;
-            text-align: center;
-            font-weight: bold;
-            margin: 20px 0;
-            font-size: 20px;
-        }
-
-        .schedule-list { list-style: none; padding: 0; }
-        .schedule-item { 
-            display: flex; justify-content: space-between; 
-            padding: 15px; background: var(--glass); 
-            margin-bottom: 8px; border-radius: 15px;
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-<div class="bg-glow"></div>
-
-<div class="app-container">
-    <div class="screen active" id="sc1">
-        <div style="font-size:100px; text-align:center; margin-top:60px; filter: drop-shadow(0 0 20px var(--accent));">🎒</div>
-        <h1 style="text-align:center;">الحقيبة الذكية</h1>
-        <p style="text-align:center; opacity:0.8; line-height:1.6;">وجهتك نحو تطورٍ أذكي، لراحة ظهرك وأمان خطواتك كل يوم.</p>
-        <button class="btn" style="margin-top:auto; margin-bottom: 50px;" onclick="showScreen('sc2')">ابدأ الرحلة</button>
+<div class="glass-panel">
+    <div class="title">نظام الجدولة الأسبوعي</div>
+    
+    <div style="margin-bottom: 20px;">
+        <input type="number" placeholder="العمر" value="17" style="width: 90%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid #334155; border-radius: 8px; color: white; margin-bottom: 10px;">
+        <input type="number" placeholder="الوزن الحالي" style="width: 90%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid #334155; border-radius: 8px; color: white;">
     </div>
 
-    <div class="screen" id="sc2">
-        <h2>أهلاً بك 👋</h2>
-        <p style="opacity: 0.7; margin-bottom: 30px;">نحتاج لبعض التفاصيل لنخصص لك التجربة.</p>
-        <div style="margin-bottom: 20px;">
-            <label>العمر</label>
-            <input type="number" id="uAge" placeholder="أدخل عمرك">
-        </div>
-        <div style="margin-bottom: 20px;">
-            <label>وزن جسمك (كجم)</label>
-            <input type="number" id="uWeight" placeholder="أدخل وزنك الحالي">
-        </div>
-        <button class="btn" style="margin-top:auto; margin-bottom: 50px;" onclick="showScreen('sc3')">التالي</button>
-    </div>
+    <button class="glow-btn btn-primary" onclick="toggleGrid()">
+        <span>🔓</span> عرض الجدول التفصيلي
+    </button>
+    
+    <button class="glow-btn btn-secondary">إعادة تعيين البيانات</button>
 
-    <div class="screen" id="sc3">
-        <h2>تجهيز اليوم ⚖️</h2>
-        <div style="margin-bottom: 20px;">
-            <label>اليوم الدراسي</label>
-            <select id="selectedDay">
-                <option>الأحد</option>
-                <option>الاثنين</option>
-                <option>الثلاثاء</option>
-                <option>الأربعاء</option>
-                <option>الخميس</option>
-            </select>
-        </div>
-        <div style="margin-bottom: 20px;">
-            <label>وزن حقيبتك الآن</label>
-            <input type="number" id="bWeight" placeholder="أدخل الوزن بالكجم">
-        </div>
-        <button class="btn btn-secondary" onclick="showScreen('sc4')">📅 جدولك الدراسي</button>
-        <button class="btn" style="margin-top:auto; margin-bottom: 50px;" onclick="runAnalysis()">التالي</button>
-    </div>
-
-    <div class="screen" id="sc4">
-        <h2>الجدول الدراسي 🗓️</h2>
-        <div class="schedule-list">
-            <div class="schedule-item"><span>الأحد</span> <b>5.0 كجم</b></div>
-            <div class="schedule-item"><span>الاثنين</span> <b>4.5 كجم</b></div>
-            <div class="schedule-item"><span>الثلاثاء</span> <b>4.0 كجم</b></div>
-            <div class="schedule-item"><span>الأربعاء</span> <b>3.5 كجم</b></div>
-            <div class="schedule-item"><span>الخميس</span> <b>2.5 كجم</b></div>
-        </div>
-        <button class="btn" style="margin-top:auto; margin-bottom: 50px;" onclick="showScreen('sc3')">رجوع</button>
-    </div>
-
-    <div class="screen" id="sc5">
-        <h3 id="resDay" style="margin:0; color: var(--accent);"></h3>
-        
-        <div id="statusBox" class="status-badge">جاري التحليل...</div>
-
-        <div class="card" style="margin-bottom: 15px; text-align: center;">
-            <small style="opacity: 0.6;">الموقع الحالي</small>
-            <div style="font-size: 18px; margin-top: 5px;">📍 حي الصهاريج</div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="card">
-                <small style="opacity: 0.6;">الخطوات</small>
-                <div style="font-size: 20px; font-weight: bold;">5,210</div>
-            </div>
-            <div class="card">
-                <small style="opacity: 0.6;">السعرات</small>
-                <div id="resCal" style="font-size: 20px; font-weight: bold; color: var(--warning);">0</div>
-            </div>
-        </div>
-
-        <button class="btn btn-secondary" style="margin-top:auto; margin-bottom: 50px;" onclick="location.reload()">إعادة تعيين</button>
+    <div class="data-grid" id="mainGrid">
+        <table>
+            <thead>
+                <tr>
+                    <th>اليوم</th>
+                    <th>السعرات</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>الأحد</td><td>2400</td><td>🔥 نشط</td></tr>
+                <tr><td>الاثنين</td><td>2200</td><td>⚡ تمرين</td></tr>
+                <tr><td>الثلاثاء</td><td>2400</td><td>🔥 نشط</td></tr>
+                <tr><td>الأربعاء</td><td>2200</td><td>⚡ تمرين</td></tr>
+                <tr><td>الخميس</td><td>2500</td><td>🏆 قمة</td></tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
 <script>
-    const dayWeights = { "الأحد": 5.0, "الاثنين": 4.5, "الثلاثاء": 4.0, "الأربعاء": 3.5, "الخميس": 2.5 };
-
-    function showScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-
-    function runAnalysis() {
-        const uw = parseFloat(document.getElementById('uWeight').value);
-        const bw = parseFloat(document.getElementById('bWeight').value);
-        const day = document.getElementById('selectedDay').value;
-
-        if(!uw || !bw) return alert("من فضلك أكمل البيانات");
-
-        const expect = dayWeights[day];
-        const box = document.getElementById('statusBox');
-        document.getElementById('resDay').innerText = "تقرير يوم " + day;
-        document.getElementById('resCal').innerText = Math.round(uw * 0.9) + " kcal";
-
-        // إزالة الاهتزاز إذا كان موجوداً
-        box.classList.remove('shake-active');
-
-        if (bw <= expect) {
-            box.innerText = "مثالية ✅";
-            box.style.background = "var(--success)";
-            box.style.color = "white";
-        } else if (bw <= expect + 1.5) {
-            box.innerText = "جيدة نوعاً ما ⚠️";
-            box.style.background = "var(--warning)";
-            box.style.color = "#000";
-            // تشغيل الاهتزاز
-            setTimeout(() => box.classList.add('shake-active'), 100);
-        } else {
-            box.innerText = "خطيرة جداً 🚨";
-            box.style.background = "var(--danger)";
-            box.style.color = "white";
-            // تشغيل الاهتزاز
-            setTimeout(() => box.classList.add('shake-active'), 100);
-        }
-
-        showScreen('sc5');
+    function toggleGrid() {
+        const grid = document.getElementById('mainGrid');
+        grid.style.display = grid.style.display === 'block' ? 'none' : 'block';
     }
 </script>
 
