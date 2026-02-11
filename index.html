@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق الحقيبة الذكية Ultimate Pro</title>
+    <title>تطبيق الحقيبة الذكية PRO</title>
     <style>
         :root {
             --bg: #0f172a;
@@ -13,6 +13,7 @@
             --danger: #ef4444;
             --warning: #f59e0b;
             --success: #22c55e;
+            --indigo: #6366f1;
         }
 
         body {
@@ -47,13 +48,14 @@
             padding: 25px;
             height: 100%;
             animation: fadeIn 0.4s ease-in-out;
+            box-sizing: border-box;
         }
 
         .screen.active { display: flex; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* تأثير الاهتزاز التفاعلي */
+        /* تأثير الاهتزاز */
         @keyframes shake {
             0% { transform: translateX(0); }
             25% { transform: translateX(-8px); }
@@ -62,9 +64,7 @@
             100% { transform: translateX(0); }
         }
 
-        .shake-trigger {
-            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-        }
+        .shake-trigger { animation: shake 0.3s ease-in-out infinite; }
 
         .btn {
             background: var(--accent);
@@ -76,18 +76,20 @@
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
-            margin-top: 15px;
+            margin-top: 10px;
+            width: 100%;
         }
 
-        .btn:active {
-            transform: scale(0.97);
-            background: #7dd3fc;
-            box-shadow: 0 0 25px var(--accent);
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--indigo);
+            color: white;
+            margin-top: 15px;
         }
 
         .input-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-size: 14px; opacity: 0.9; }
-        input {
+        input, select {
             width: 100%;
             padding: 14px;
             border-radius: 15px;
@@ -98,9 +100,24 @@
             font-size: 16px;
         }
 
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .schedule-table th, .schedule-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .schedule-table th { background: var(--indigo); font-size: 14px; }
+
         .map-box {
-            height: 160px;
-            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://api.placeholder.com/400/200') center/cover;
+            height: 150px;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://api.placeholder.com/400/200') center/cover;
             border-radius: 25px;
             margin: 15px 0;
             position: relative;
@@ -108,150 +125,172 @@
         }
 
         .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: var(--glass); padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .card { background: var(--glass); padding: 15px; border-radius: 20px; text-align: center; }
 
         .status-highlight {
-            margin-top: 12px;
+            margin: 15px 0;
             padding: 20px;
             border-radius: 25px;
             text-align: center;
             font-weight: bold;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            transition: all 0.5s ease;
+            transition: 0.5s;
         }
-
-        #alarmModal {
-            display: none;
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .modal-content { background: #1e293b; padding: 25px; border-radius: 30px; text-align: center; width: 100%; border: 1px solid var(--danger); }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div id="alarmModal">
-        <div class="modal-content">
-            <h3 style="color:var(--danger); margin-bottom:20px;">🚨 نظام الأمان والإنذار</h3>
-            <button class="btn" style="width:100%;" onclick="activateAlarm('السرقة والبعد')">📍 إنذار البعد (سرقة)</button>
-            <button class="btn" style="width:100%; background:#f59e0b;" onclick="activateAlarm('انخفاض الشحن')">🪫 إنذار شحن منخفض</button>
-            <button class="btn" style="width:100%; background:none; color:white; border:1px solid white;" onclick="closeAlarm()">إلغاء</button>
-        </div>
-    </div>
-
     <div class="screen active" id="sc1">
-        <div style="font-size:70px; text-align:center; margin-top:60px;">🎒</div>
-        <h1 style="text-align:center; font-size: 26px;">مرحباً في تطبيق الحقيبة الذكية</h1>
-        <p style="text-align:center; opacity:0.8; line-height:1.6;">الجيل القادم من التكنولوجيا الشخصية لراحتك وأمانك الدائم.</p>
-        <button class="btn" onclick="showScreen('sc2')">ابدأ الآن</button>
+        <div style="font-size:80px; text-align:center; margin-top:80px;">🎒</div>
+        <h1 style="text-align:center;">الحقيبة الذكية PRO</h1>
+        <p style="text-align:center; opacity:0.7; padding: 0 20px;">نظامك الذكي لمراقبة الوزن والجدول الدراسي بدقة.</p>
+        <button class="btn" onclick="showScreen('sc2')" style="margin-top:auto; margin-bottom: 40px;">دخول النظام</button>
     </div>
 
     <div class="screen" id="sc2">
-        <h2 style="text-align:center;">ملف المستخدم 👤</h2>
-        <div class="input-group">
-            <label>وزن جسمك (كجم)</label>
-            <input type="number" id="uWeight" placeholder="أدخل وزنك الحالي..">
-        </div>
+        <h2 style="text-align:center;">الملف الشخصي 👤</h2>
         <div class="input-group">
             <label>العمر</label>
-            <input type="number" id="uAge" placeholder="أدخل عمرك..">
+            <input type="number" id="uAge" placeholder="أدخل عمرك">
+        </div>
+        <div class="input-group">
+            <label>وزن جسمك (كجم)</label>
+            <input type="number" id="uWeight" placeholder="أدخل وزنك">
+        </div>
+        <button class="btn" onclick="showScreen('sc3')" style="margin-top:auto; margin-bottom: 40px;">التالي</button>
+    </div>
+
+    <div class="screen" id="sc3">
+        <h2 style="text-align:center;">إعدادات الحقيبة ⚙️</h2>
+        <div class="input-group">
+            <label>اختر اليوم الدراسي</label>
+            <select id="selectedDay">
+                <option value="الأحد">الأحد</option>
+                <option value="الاثنين">الاثنين</option>
+                <option value="الثلاثاء">الثلاثاء</option>
+                <option value="الأربعاء">الأربعاء</option>
+                <option value="الخميس">الخميس</option>
+            </select>
         </div>
         <div class="input-group">
             <label>وزن الحقيبة الحالي (كجم)</label>
-            <input type="number" id="bWeight" placeholder="أدخل وزن الحقيبة الآن..">
+            <input type="number" id="bWeight" placeholder="أدخل وزن الحقيبة الآن">
         </div>
-        <button class="btn" onclick="finishSetup()">دخول لوحة التحكم</button>
+        
+        <button class="btn btn-outline" onclick="showScreen('sc4')">📅 جدولك الدراسي</button>
+        <button class="btn" onclick="processData()" style="margin-top:auto; margin-bottom: 40px;">تحليل الوزن والموقع</button>
     </div>
 
-    <div class="screen" id="sc3" style="overflow-y: auto;">
-        <div style="display:flex; justify-content: space-between; align-items:center;">
-            <h3 style="margin:0;">لوحة التحكم</h3>
-            <div style="color:var(--accent); font-size:12px; font-weight:bold;">● متصل الآن</div>
-        </div>
+    <div class="screen" id="sc4">
+        <h3 style="text-align:center;">تفاصيل الجدول الأسبوعي</h3>
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th>اليوم</th>
+                    <th>الوزن المتوقع</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>الأحد</td><td>5.0 كجم</td></tr>
+                <tr><td>الاثنين</td><td>4.5 كجم</td></tr>
+                <tr><td>الثلاثاء</td><td>4.0 كجم</td></tr>
+                <tr><td>الأربعاء</td><td>3.5 كجم</td></tr>
+                <tr><td>الخميس</td><td>2.5 كجم</td></tr>
+            </tbody>
+        </table>
+        <p style="font-size: 12px; text-align: center; color: var(--accent); margin-top: 15px;">* يتم حساب الوزن بناءً على الكتب والأنشطة.</p>
+        <button class="btn" onclick="showScreen('sc3')" style="margin-top:auto; margin-bottom: 40px;">العودة للتكملة</button>
+    </div>
 
+    <div class="screen" id="sc5" style="overflow-y: auto;">
+        <h3 id="dayTitle" style="margin:0; color: var(--accent);"></h3>
+        
         <div class="map-box">
-            <div style="position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); font-size:35px; filter: drop-shadow(0 0 10px var(--accent));">📍</div>
-            <div style="position:absolute; bottom:0; width:100%; text-align:center; padding:8px 0; font-size:13px; background:rgba(15, 23, 42, 0.8); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;">
+            <div style="position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); font-size:30px; filter: drop-shadow(0 0 10px var(--accent));">📍</div>
+            <div style="position:absolute; bottom:0; width:100%; text-align:center; padding:8px 0; font-size:12px; background:rgba(15, 23, 42, 0.9);">
                 الموقع الحالي: <strong>حي الصهاريج</strong>
             </div>
         </div>
 
+        <div id="statusBox" class="status-highlight">
+            <div id="statusMainText" style="font-size: 18px;"></div>
+            <div id="statusSubText" style="font-size: 13px; font-weight: normal; margin-top: 5px;"></div>
+        </div>
+
         <div class="dashboard-grid">
-            <div class="card"><small>🔋 البطارية</small><div style="font-size:20px; color:#22c55e; font-weight:bold;">96%</div></div>
-            <div class="card"><small>⚖️ وزن الحقيبة</small><div id="displayBagWeight" style="font-size:20px; font-weight:bold;">0 كجم</div></div>
+            <div class="card"><small>👣 الخطوات</small><div style="font-size:18px;">4,850</div></div>
+            <div class="card"><small>🔥 سعرات</small><div id="calories" style="font-size:18px; color:var(--warning);">0</div></div>
         </div>
 
-        <div id="statusCard" class="status-highlight">
-            <div style="font-size: 18px;">الحالة: <span id="weightStatus">جاري الحساب..</span></div>
-            <div id="weightDetailText" style="opacity:0.9; font-size: 12px; margin-top: 5px; font-weight: normal;">بناءً على وزنك وعمرك لحماية عمودك الفقري</div>
+        <div class="card" style="margin-top:12px; width:100%; box-sizing: border-box;">
+            <small>⚖️ وزن الحقيبة المسجل</small>
+            <div id="finalBagWeight" style="font-size:20px; font-weight:bold;">0 كجم</div>
         </div>
 
-        <div class="dashboard-grid" style="margin-top:12px;">
-            <div class="card"><small>👣 الخطوات</small><div style="font-size:18px;">3,420</div></div>
-            <div class="card"><small>🔥 سعرات</small><div id="calVal" style="font-size:18px; color:#fbbf24;">0</div></div>
-        </div>
-
-        <h4 style="margin: 20px 0 10px 0; font-size:16px; text-align: center;">الأمان والنظام</h4>
-        <button class="btn" style="width:100%; background:transparent; border:2px solid var(--danger); color:var(--danger); margin:0;" onclick="openAlarm()">🚨 تفعيل نظام الإنذار</button>
-        
-        <button class="btn" onclick="location.reload()" style="background:none; border:none; color:white; opacity:0.4; font-size:11px; width:100%; margin-top:15px;">إعادة تعيين التطبيق</button>
+        <button class="btn" onclick="location.reload()" style="background:none; border:none; color:white; opacity:0.4; font-size:12px; margin-top: 20px;">إعادة الضبط</button>
     </div>
 </div>
 
 <script>
+    // الأوزان المتوقعة بناءً على الجدول الدراسي
+    const dailyExpectation = {
+        "الأحد": 5.0,
+        "الاثنين": 4.5,
+        "الثلاثاء": 4.0,
+        "الأربعاء": 3.5,
+        "الخميس": 2.5
+    };
+
     function showScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
 
-    function finishSetup() {
+    function processData() {
         const uWeight = parseFloat(document.getElementById('uWeight').value);
-        const uAge = document.getElementById('uAge').value;
         const bWeight = parseFloat(document.getElementById('bWeight').value);
-        
-        if(!uWeight || !uAge || !bWeight) return alert("فضلاً عبئ جميع البيانات");
+        const day = document.getElementById('selectedDay').value;
 
-        document.getElementById('displayBagWeight').innerText = bWeight + " كجم";
+        if(!uWeight || !bWeight) return alert("فضلاً أدخل جميع البيانات");
 
-        const ratio = (bWeight / uWeight) * 100;
-        const statusSpan = document.getElementById('weightStatus');
-        const statusCard = document.getElementById('statusCard');
+        const expected = dailyExpectation[day];
+        const statusBox = document.getElementById('statusBox');
+        const mainText = document.getElementById('statusMainText');
+        const subText = document.getElementById('statusSubText');
 
-        // إضافة كلاس الاهتزاز أولاً لإعادة تشغيله في كل مرة
-        statusCard.classList.remove('shake-trigger');
-        void statusCard.offsetWidth; // سطر سحري لإعادة تشغيل الـ Animation
-        statusCard.classList.add('shake-trigger');
+        document.getElementById('dayTitle').innerText = "تقرير يوم " + day;
+        document.getElementById('finalBagWeight').innerText = bWeight + " كجم";
+        document.getElementById('calories').innerText = Math.round(uWeight * 0.85) + " سعرة";
 
-        if(ratio <= 10) {
-            statusSpan.innerText = "وزن ممتاز ✅";
-            statusCard.style.backgroundColor = "var(--success)";
-            statusCard.style.boxShadow = "0 0 25px rgba(34, 197, 94, 0.5)";
-        } else if (ratio <= 15) {
-            statusSpan.innerText = "جيد نوعاً ما ⚠️";
-            statusCard.style.backgroundColor = "var(--warning)";
-            statusCard.style.boxShadow = "0 0 25px rgba(245, 158, 11, 0.5)";
-        } else {
-            statusSpan.innerText = "خطر (ثقيلة جداً) 🚨";
-            statusCard.style.backgroundColor = "var(--danger)";
-            statusCard.style.boxShadow = "0 0 25px rgba(239, 68, 68, 0.5)";
+        // إزالة أي اهتزاز سابق
+        statusBox.classList.remove('shake-trigger');
+
+        // منطق المقارنة (كلمة بكلمة كما طلبت)
+        if (bWeight <= expected) {
+            // مثالية - أخضر
+            mainText.innerText = "مثالية ✅";
+            subText.innerText = "وزن الحقيبة مطابق لجدول اليوم الدراسي.";
+            statusBox.style.backgroundColor = "var(--success)";
+            statusBox.style.color = "white";
+        } 
+        else if (bWeight <= expected + 1.5) {
+            // جيدة نوعاً ما - برتقالي + اهتزاز
+            mainText.innerText = "جيدة نوعاً ما ⚠️";
+            subText.innerText = "يرجى تعديل الحقيبة وإزالة الكتب الزائدة.";
+            statusBox.style.backgroundColor = "var(--warning)";
+            statusBox.style.color = "#000";
+            setTimeout(() => statusBox.classList.add('shake-trigger'), 100);
+        } 
+        else {
+            // خطيرة - أحمر + اهتزاز
+            mainText.innerText = "خطيرة جداً 🚨";
+            subText.innerText = "يجب تعديل الجدول فوراً، الوزن يضر ظهرك.";
+            statusBox.style.backgroundColor = "var(--danger)";
+            statusBox.style.color = "white";
+            setTimeout(() => statusBox.classList.add('shake-trigger'), 100);
         }
 
-        document.getElementById('calVal').innerText = Math.round(uWeight * 0.8) + " سعرة";
-
-        showScreen('sc3');
-    }
-
-    function openAlarm() { document.getElementById('alarmModal').style.display = 'flex'; }
-    function closeAlarm() { document.getElementById('alarmModal').style.display = 'none'; }
-    function activateAlarm(type) {
-        alert("🚨 تم تفعيل إنذار " + type + " بنجاح!");
-        closeAlarm();
+        showScreen('sc5');
     }
 </script>
 
