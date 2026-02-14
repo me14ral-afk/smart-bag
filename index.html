@@ -53,7 +53,6 @@
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* اهتزاز بسيط للتنبيه */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
@@ -114,7 +113,6 @@
             font-size: 0.85rem;
         }
 
-        /* تمييز الأيقونة في الصفحة الأولى */
         .hero-icon {
             font-size: 80px;
             color: #4f46e5;
@@ -153,7 +151,7 @@
         <h3 style="color: var(--primary);">حقيبتك المدرسية 👇</h3>
         
         <div class="link-container">
-            <a href="https://l.instagram.com/?u=https%3A%2F%2Fsmart-bag-pro.base44.app%2F&e=AT3NPg3N2-voNtbefJFEv_jPeUqWGBMk6y5pIps1GNGimq5s7f5qJNQgptBtzU5Wgw2JkQslxv9khMaEuUb8mEsFNtO1WdJwvCc-ZoPppEuwxwqp-sgaq6DQGP0x" 
+            <a href="https://smart-bag-pro.base44.app/" 
                target="_blank" style="color: var(--primary); font-weight: bold; text-decoration: none;">
                فتح الجدول الدراسي <i class="fas fa-external-link-alt"></i>
             </a>
@@ -200,13 +198,8 @@
 </div>
 
 <script>
-    // الأوزان المثالية من صورك (بالكيلو جرام)
     const idealWeights = {
-        'sun': 3.1,
-        'mon': 3.1,
-        'tue': 2.3,
-        'wed': 2.8,
-        'thu': 2.2
+        'sun': 3.1, 'mon': 3.1, 'tue': 2.3, 'wed': 2.8, 'thu': 2.2
     };
 
     function nextPage(num) {
@@ -220,36 +213,28 @@
         const day = document.getElementById('day_select').value;
         const box = document.getElementById('statusResult');
 
-        if(!uW || !bW || !day) { alert("يرجى إكمال البيانات واختيار اليوم"); return; }
+        if(!uW || !bW || !day) { alert("يرجى إكمال البيانات"); return; }
 
         const dayIdeal = idealWeights[day];
-        const healthLimit = uW * 0.15; // الحد الصحي الأقصى 15% من وزن الجسم
-
-        // إزالة أي اهتزاز سابق
         box.classList.remove('shake-anim');
 
-        // المنطق البرمجي:
         if (bW <= dayIdeal) {
             box.innerHTML = "وزن مثالي وآمن ✅";
             box.style.background = "var(--success)";
         } 
         else if (bW > dayIdeal && bW <= dayIdeal + 1.0) {
-            // أعلى من الجدول بشيء بسيط (حتى 1 كيلو زيادة)
             box.innerHTML = "جيدة ويرجى تعديل الحقيبة ⚠️";
             box.style.background = "var(--warning)";
-            void box.offsetWidth; // إعادة تشغيل الانيميشن
+            void box.offsetWidth;
             box.classList.add('shake-anim');
         } 
         else {
-            // فارق عالي (أكثر من 1 كيلو زيادة عن الجدول أو تجاوز حد الـ 15%)
             box.innerHTML = "خطرة ويجب تعديلها فوراً ❌";
             box.style.background = "var(--danger)";
             void box.offsetWidth;
             box.classList.add('shake-anim');
         }
-
         nextPage(4);
-        // التوقف عن الاهتزاز بعد ثانيتين
         setTimeout(() => box.classList.remove('shake-anim'), 2000);
     }
 </script>
