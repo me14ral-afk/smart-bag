@@ -71,6 +71,8 @@
             cursor: pointer;
             width: 85%;
             margin: 10px 0;
+            text-decoration: none;
+            display: inline-block;
         }
 
         input, select {
@@ -82,21 +84,11 @@
             font-size: 1rem;
         }
 
-        .link-container {
-            background: #f1f5f9;
-            padding: 15px;
-            border-radius: 15px;
-            margin: 10px 0;
-            width: 85%;
-            border: 1px dashed var(--primary);
-        }
-
         .status-badge {
             width: 90%;
             padding: 20px;
             border-radius: 20px;
             color: white;
-            font-weight: bold;
             margin: 20px 0;
             transition: 0.3s;
         }
@@ -117,7 +109,6 @@
             font-size: 80px;
             color: #4f46e5;
             margin-top: 50px;
-            filter: drop-shadow(0 5px 15px rgba(79, 70, 229, 0.4));
             animation: bounce 2s infinite;
         }
 
@@ -136,12 +127,12 @@
             <i class="fas fa-briefcase"></i>
         </div>
         <h2 style="color: var(--primary-dark); margin-top: 20px;">حقيبتي الذكية</h2>
-        <p style="color: #64748b; line-height: 1.6;">ابتكار يدمج التكنولوجيا بحياتك المدرسية لتجربة تعليمية أكثر راحة واستدامة.</p>
-        <button class="btn" onclick="nextPage(2)">استكشف المستقبل</button>
+        <p style="color: #64748b; line-height: 1.6;">تكنولوجيا تمنحك الراحة والذكاء في كل خطوة مدرسية.</p>
+        <button class="btn" onclick="nextPage(2)">ابدأ</button>
     </div>
 
     <div id="p2" class="page">
-        <h3 style="color: var(--primary);">خطوتك الأولى</h3>
+        <h3 style="color: var(--primary);">بياناتك</h3>
         <input type="number" id="user_age" placeholder="أدخل عمرك">
         <input type="number" id="user_weight" placeholder="وزنك الشخصي (كيلو جرام)">
         <button class="btn" onclick="nextPage(3)">التالي</button>
@@ -150,12 +141,12 @@
     <div id="p3" class="page">
         <h3 style="color: var(--primary);">حقيبتك المدرسية 👇</h3>
         
-        <div class="link-container">
-            <a href="https://smart-bag-pro.base44.app/" 
-               target="_blank" style="color: var(--primary); font-weight: bold; text-decoration: none;">
-               فتح الجدول الدراسي <i class="fas fa-external-link-alt"></i>
-            </a>
-        </div>
+        <a href="https://smart-bag-pro.base44.app/" target="_blank" class="btn" 
+           style="background: #f1f5f9; color: var(--primary); border: 2px dashed var(--primary); width: 80%;">
+           <i class="fas fa-external-link-alt"></i> فتح الجدول الدراسي
+        </a>
+
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 10px;">اختر اليوم والوزن الحالي:</p>
 
         <select id="day_select">
             <option value="">اختر اليوم الدراسي</option>
@@ -166,7 +157,7 @@
             <option value="thu">الخميس</option>
         </select>
         
-        <input type="number" id="bag_weight" placeholder="وزن الحقيبة الحالي (كيلو جرام)">
+        <input type="number" id="bag_weight" placeholder="وزن الحقيبة (كيلو جرام)">
         
         <button class="btn" onclick="calculateLogic()">تحليل الوزن الذكي</button>
     </div>
@@ -174,7 +165,10 @@
     <div id="p4" class="page">
         <h3 style="color: var(--primary);">النتيجة النهائية</h3>
         
-        <div id="statusResult" class="status-badge">--</div>
+        <div id="statusResult" class="status-badge">
+            <div id="mainStatus" style="font-weight: bold; font-size: 1.3rem;">--</div>
+            <div id="subStatus" style="font-size: 0.9rem; margin-top: 5px;">--</div>
+        </div>
 
         <div class="info-card">
             <i class="fab fa-bluetooth" style="color: #2563eb;"></i> متصل بنظام الحقيبة
@@ -192,15 +186,13 @@
             <span><i class="fas fa-fire-alt"></i> 85 سعرة</span>
         </div>
 
-        <button class="btn btn-blue" style="background:var(--primary)" onclick="nextPage(1)">إعادة الفحص</button>
+        <button class="btn" style="background:var(--primary)" onclick="nextPage(1)">إعادة الفحص</button>
     </div>
 
 </div>
 
 <script>
-    const idealWeights = {
-        'sun': 3.1, 'mon': 3.1, 'tue': 2.3, 'wed': 2.8, 'thu': 2.2
-    };
+    const idealWeights = { 'sun': 3.1, 'mon': 3.1, 'tue': 2.3, 'wed': 2.8, 'thu': 2.2 };
 
     function nextPage(num) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -212,6 +204,8 @@
         const bW = parseFloat(document.getElementById('bag_weight').value);
         const day = document.getElementById('day_select').value;
         const box = document.getElementById('statusResult');
+        const main = document.getElementById('mainStatus');
+        const sub = document.getElementById('subStatus');
 
         if(!uW || !bW || !day) { alert("يرجى إكمال البيانات"); return; }
 
@@ -219,17 +213,20 @@
         box.classList.remove('shake-anim');
 
         if (bW <= dayIdeal) {
-            box.innerHTML = "وزن مثالي وآمن ✅";
+            main.innerHTML = "وزن مثالي ✅";
+            sub.innerHTML = "حقيبتك متوافقة مع الجدول";
             box.style.background = "var(--success)";
         } 
         else if (bW > dayIdeal && bW <= dayIdeal + 1.0) {
-            box.innerHTML = "جيدة ويرجى تعديل الحقيبة ⚠️";
+            main.innerHTML = "جيدة نوعاً ما ⚠️";
+            sub.innerHTML = "يرجى تعديل الحقيبة";
             box.style.background = "var(--warning)";
             void box.offsetWidth;
             box.classList.add('shake-anim');
         } 
         else {
-            box.innerHTML = "خطرة ويجب تعديلها فوراً ❌";
+            main.innerHTML = "خطرة جداً ❌";
+            sub.innerHTML = "يجب تعديل الحقيبة فوراً";
             box.style.background = "var(--danger)";
             void box.offsetWidth;
             box.classList.add('shake-anim');
