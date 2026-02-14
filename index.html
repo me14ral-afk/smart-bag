@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق الحقيبة الذكية</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>تطبيق حقيبتي الذكية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-blue: #0056b3;
-            --light-blue: #e3f2fd;
-            --accent-orange: #ff9800;
-            --danger-red: #f44336;
-            --success-green: #4caf50;
-            --dark-blue: #003366;
+            --primary: #4f46e5; /* Indigo 600 */
+            --primary-dark: #3730a3;
+            --accent: #f59e0b; /* Amber 500 */
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light-blue);
+            background: var(--bg-gradient);
             margin: 0;
             display: flex;
             justify-content: center;
@@ -26,206 +27,227 @@
             overflow: hidden;
         }
 
-        .app-container {
+        .app-shell {
             width: 100%;
-            max-width: 400px;
-            height: 90vh;
+            max-width: 414px;
+            height: 85vh;
             background: white;
-            border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
+            border: 8px solid #1e293b;
         }
 
         .page {
             display: none;
-            padding: 30px;
+            padding: 25px;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            height: 100%;
-            animation: fadeIn 0.5s ease;
+            min-height: 100%;
+            animation: slideIn 0.4s ease-out;
         }
 
         .active { display: flex; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
 
-        /* الأزرار والتفاعل */
+        /* التصميم التفاعلي للأزرار */
         .btn {
-            background-color: var(--accent-orange);
+            background: var(--accent);
             color: white;
             border: none;
-            padding: 15px 40px;
-            border-radius: 50px;
+            padding: 16px 32px;
+            border-radius: 18px;
             font-size: 1.1rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(255,152,0,0.3);
-            margin-top: 20px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            width: 80%;
+            margin: 10px 0;
         }
 
         .btn:active {
-            transform: scale(0.9);
-            filter: brightness(1.1);
+            transform: scale(0.95);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* المدخلات */
+        .btn-secondary {
+            background: var(--primary);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        /* الهزة التفاعلية */
+        @keyframes haptic-shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-8px); }
+            80% { transform: translateX(8px); }
+        }
+        .shake { animation: haptic-shake 0.3s ease-in-out; }
+
+        /* مدخلات البيانات */
         input, select {
-            width: 80%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 2px solid var(--light-blue);
-            border-radius: 10px;
-            outline: none;
+            width: 85%;
+            padding: 15px;
+            margin: 12px 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
             font-size: 1rem;
+            transition: border-color 0.3s;
         }
+        input:focus { border-color: var(--primary); outline: none; }
 
-        input:focus { border-color: var(--primary-blue); }
-
-        /* تأثير الهزة */
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-            100% { transform: translateX(0); }
-        }
-
-        .shake-effect { animation: shake 0.2s ease-in-out 3; }
-
-        /* البطاقات والرموز */
-        .status-card {
+        .status-badge {
             width: 90%;
             padding: 20px;
             border-radius: 20px;
-            margin-top: 15px;
-            font-weight: bold;
             color: white;
+            font-weight: 800;
+            margin: 20px 0;
+            font-size: 1.2rem;
         }
 
-        .info-box {
-            background: #f8f9fa;
+        .info-card {
+            background: #f1f5f9;
             width: 90%;
             padding: 15px;
             border-radius: 15px;
-            margin-top: 10px;
-            border-right: 5px solid var(--primary-blue);
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             text-align: right;
         }
 
-        .map-icon { color: var(--danger-red); font-size: 2rem; }
+        .map-box { border-right: 4px solid var(--danger); }
     </style>
 </head>
 <body>
 
-<div class="app-container">
+<div class="app-shell">
     
-    <div id="page1" class="page active">
-        <i class="fas fa-briefcase" style="font-size: 80px; color: var(--primary-blue); margin-bottom: 20px;"></i>
-        <h1 style="color: var(--dark-blue);">مرحباً في تطبيق الحقيبة الذكية</h1>
-        <p>مستقبلك يبدأ بحقيبة صحية وذكية</p>
-        <button class="btn" onclick="nextPage(2)">ابدأ الآن <i class="fas fa-arrow-left"></i></button>
+    <div id="p1" class="page active">
+        <div style="margin-top: 40px; background: #e0e7ff; padding: 30px; border-radius: 30px;">
+            <i class="fas fa-backpack" style="font-size: 80px; color: var(--primary);"></i>
+        </div>
+        <h1 style="color: var(--primary-dark); margin-top: 30px;">مرحباً في تطبيق الحقيبة الذكية</h1>
+        <p style="color: #64748b;">نظامك الذكي لحياة مدرسية صحية</p>
+        <button class="btn" onclick="nextPage(2)">دخول التطبيق <i class="fas fa-chevron-left"></i></button>
     </div>
 
-    <div id="page2" class="page">
-        <h2 style="color: var(--primary-blue);">أخبرنا عنك</h2>
-        <input type="number" id="userAge" placeholder="أدخل عمرك">
-        <input type="number" id="userWeight" placeholder="أدخل وزنك (كجم)">
+    <div id="p2" class="page">
+        <h2 style="color: var(--primary);">بيانات المستخدم</h2>
+        <p style="color: #64748b;">نحتاج هذه البيانات لحساب الوزن المثالي لك</p>
+        <input type="number" id="age" placeholder="العمر">
+        <input type="number" id="weight" placeholder="وزنك الشخصي (كجم)">
         <button class="btn" onclick="nextPage(3)">التالي</button>
     </div>
 
-    <div id="page3" class="page">
-        <h2 style="color: var(--primary-blue);">تجهيز الحقيبة</h2>
-        <select id="daySelect">
-            <option value="">اختر اليوم</option>
-            <option value="الأحد">الأحد</option>
-            <option value="الاثنين">الاثنين</option>
-            <option value="الثلاثاء">الثلاثاء</option>
-            <option value="الأربعاء">الأربعاء</option>
-            <option value="الخميس">الخميس</option>
+    <div id="p3" class="page">
+        <h2 style="color: var(--primary);">فحص الحالة اليومية</h2>
+        <select id="day">
+            <option value="">اختر اليوم الدراسي</option>
+            <option value="0">الأحد</option>
+            <option value="1">الاثنين</option>
+            <option value="2">الثلاثاء</option>
+            <option value="3">الأربعاء</option>
+            <option value="4">الخميس</option>
         </select>
-        <input type="number" id="bagWeight" placeholder="وزن الحقيبة الآن (جرام)">
+        <input type="number" id="bag_w" placeholder="وزن الحقيبة الحالي (جرام)">
         
-        <button class="btn" style="background-color: var(--dark-blue);" onclick="openCalendar()">
-            <i class="fas fa-calendar-alt"></i> جدولك الدراسي
+        <button class="btn btn-secondary" onclick="openSchedule()">
+            <i class="fas fa-calendar-days"></i> جدولك الدراسي
         </button>
 
-        <button class="btn" onclick="calculateStatus()">فحص الوزن</button>
+        <button class="btn" style="margin-top: 40px;" onclick="processResult()">تحليل الوزن الآن</button>
     </div>
 
-    <div id="page4" class="page">
-        <h3 style="color: var(--primary-blue);">حالة الحقيبة الذكية</h3>
+    <div id="p4" class="page">
+        <h3 style="color: var(--primary);">نتائج التحليل الذكي</h3>
         
-        <div id="statusResult" class="status-card">--</div>
+        <div id="resultBox" class="status-badge">--</div>
 
-        <div class="info-box">
-            <i class="fas fa-bluetooth-b" style="color: #0082fc;"></i> متصل عبر البلوتوث
+        <div class="info-card">
+            <i class="fab fa-bluetooth" style="color: #2563eb; font-size: 1.5rem;"></i>
+            <span>متصل بحقيبتك الذكية</span>
         </div>
 
-        <div class="info-box">
-            <div class="map-icon"><i class="fas fa-map-marker-alt"></i></div>
-            <strong>موقع الحقيبة:</strong><br>
-            حي الصهاريج - مكة المكرمة
+        <div class="info-card map-box">
+            <i class="fas fa-location-dot" style="color: var(--danger); font-size: 1.5rem;"></i>
+            <div>
+                <strong>موقع الحقيبة:</strong><br>
+                <small>حي الصهاريج - مكة المكرمة</small>
+            </div>
         </div>
 
-        <div class="info-box" id="healthStats">
-            <i class="fas fa-walking"></i> الخطوات: 1,240 <br>
-            <i class="fas fa-fire"></i> السعرات: 85 سعرة
+        <div class="info-card" style="justify-content: space-around; background: #f8fafc; border: 1px dashed #cbd5e1;">
+            <div><i class="fas fa-shoe-prints"></i> 1,240 <br><small>خطوة</small></div>
+            <div style="width: 1px; height: 30px; background: #e2e8f0;"></div>
+            <div><i class="fas fa-fire-flame-curved"></i> 85 <br><small>سعرة</small></div>
         </div>
 
-        <button class="btn" onclick="nextPage(1)">إعادة الفحص</button>
+        <button class="btn btn-secondary" onclick="nextPage(1)">إعادة الفحص</button>
     </div>
 
 </div>
 
 <script>
-    function nextPage(pageNum) {
+    // التنقل بين الصفحات مع تأثير الضغط
+    function nextPage(num) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById('page' + pageNum).classList.add('active');
+        document.getElementById('p' + num).classList.add('active');
     }
 
-    function openCalendar() {
-        // هذا هو الرابط الذي قمت بدمجه كما طلبت
-        alert("سيتم نقلك لجدول المواد (entities/CalendarEvent.json)");
-        // ملاحظة: في GitHub يمكنك ربط الملف الحقيقي هنا
+    // فتح الجدول (Calendar) المعتمد على الكود المرفق
+    function openSchedule() {
+        alert("يتم الآن الانتقال إلى نظام الجداول والمواد (Home.jsx / Calendar)");
+        // سيتم فتح صفحة الجدول الافتراضية للمشروع
         window.open('pages/Home.jsx', '_blank'); 
     }
 
-    function calculateStatus() {
-        const weightInput = document.getElementById('bagWeight').value;
-        const userWeight = document.getElementById('userWeight').value;
-        const resultDiv = document.getElementById('statusResult');
-        
-        // منطق الحساب البرمجي: الحقيبة يجب ألا تتجاوز 10% من وزن الشخص
-        const idealLimit = userWeight * 0.1 * 1000; // تحويل للكجم ثم جرام
+    // منطق الحساب الذكي بناءً على وزن المستخدم والمعايير الصحية
+    function processResult() {
+        const userW = document.getElementById('weight').value;
+        const bagW = document.getElementById('bag_w').value;
+        const resBox = document.getElementById('resultBox');
 
-        if(weightInput <= idealLimit) {
-            resultDiv.innerHTML = "وزن مثالي <i class='fas fa-check-circle'></i>";
-            resultDiv.style.backgroundColor = "#4caf50";
-            resultDiv.classList.remove('shake-effect');
+        if(!userW || !bagW) { alert("لطفاً أكمل البيانات"); return; }
+
+        // الحد الصحي هو 10% من وزن الشخص (مثال: وزن 40 كجم -> حد أقصى 4000 جرام)
+        const limit = userW * 0.1 * 1000; 
+
+        if (bagW <= limit) {
+            resBox.innerHTML = "وزن مثالي <i class='fas fa-check-circle'></i>";
+            resBox.style.background = "var(--success)";
+            resBox.classList.remove('shake');
         } 
-        else if (weightInput > idealLimit && weightInput <= idealLimit + 1000) {
-            resultDiv.innerHTML = "جيدة نوعاً ما - يرجى تعديل الحقيبة <i class='fas fa-exclamation-triangle'></i>";
-            resultDiv.style.backgroundColor = "#ff9800";
-            triggerShake(resultDiv);
+        else if (bagW > limit && bagW <= limit + 1500) {
+            resBox.innerHTML = "جيدة نوعاً ما ويرجى تعديل الحقيبة <i class='fas fa-triangle-exclamation'></i>";
+            resBox.style.background = "var(--warning)";
+            triggerHaptic(resBox);
         } 
         else {
-            resultDiv.innerHTML = "خطرة! يجب تخفيف الوزن فوراً <i class='fas fa-skull-crossbones'></i>";
-            resultDiv.style.backgroundColor = "#f44336";
-            triggerShake(resultDiv);
+            resBox.innerHTML = "خطرة ويجب تعديلها <i class='fas fa-radiation'></i>";
+            resBox.style.background = "var(--danger)";
+            triggerHaptic(resBox);
         }
 
         nextPage(4);
     }
 
-    function triggerShake(element) {
-        element.classList.add('shake-effect');
-        setTimeout(() => {
-            element.classList.remove('shake-effect');
-        }, 1500);
+    // وظيفة الهزة التفاعلية (Haptic feedback simulation)
+    function triggerHaptic(el) {
+        el.classList.add('shake');
+        setTimeout(() => el.classList.remove('shake'), 1500);
     }
 </script>
 
