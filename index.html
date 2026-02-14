@@ -7,16 +7,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-dark: #3730a3;
-            --accent: #f59e0b;
+            --deep-blue: #001f3f; 
+            --royal-blue: #004080; 
+            --tech-blue: #0074d9; 
+            --soft-blue: #7fdbff; 
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
+            --bg-grad: linear-gradient(180deg, #f0f4f8 0%, #d9e2ec 100%);
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: #000;
             margin: 0;
             display: flex;
@@ -29,14 +31,14 @@
             width: 100%;
             max-width: 400px;
             height: 85vh;
-            background: white;
+            background: var(--bg-grad);
             border-radius: 45px;
             position: relative;
-            overflow-y: auto;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             border: 12px solid #1e293b;
-            box-shadow: 0 0 50px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 31, 63, 0.4);
         }
 
         .page {
@@ -45,13 +47,14 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            min-height: 100%;
+            height: 100%;
             animation: fadeIn 0.4s ease;
+            overflow-y: auto;
         }
 
         .active { display: flex; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
@@ -61,60 +64,68 @@
         .shake-anim { animation: shake 0.2s ease-in-out 3; }
 
         .btn {
-            background: var(--accent);
+            background: var(--royal-blue);
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 18px;
+            padding: 16px 30px;
+            border-radius: 20px;
             font-size: 1.1rem;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
             width: 85%;
             margin: 10px 0;
+            transition: 0.3s;
             text-decoration: none;
             display: inline-block;
         }
+
+        .btn:active { transform: scale(0.97); }
 
         input, select {
             width: 85%;
             padding: 15px;
             margin: 10px 0;
-            border: 2px solid #e2e8f0;
+            border: 1px solid #bccad9;
             border-radius: 15px;
             font-size: 1rem;
+            background: white;
+            color: var(--deep-blue);
         }
 
         .status-badge {
             width: 90%;
             padding: 20px;
-            border-radius: 20px;
+            border-radius: 25px;
             color: white;
             margin: 20px 0;
-            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
         .info-card {
-            background: #f8fafc;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
             width: 90%;
-            padding: 12px;
-            border-radius: 15px;
-            margin: 5px 0;
+            padding: 14px;
+            border-radius: 18px;
+            margin: 6px 0;
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            color: var(--deep-blue);
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
         .hero-icon {
-            font-size: 80px;
-            color: #4f46e5;
-            margin-top: 50px;
-            animation: bounce 2s infinite;
+            font-size: 85px;
+            color: var(--tech-blue);
+            margin-top: 40px;
+            animation: float 3s ease-in-out infinite;
         }
 
-        @keyframes bounce {
+        @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-15px); }
         }
     </style>
 </head>
@@ -123,31 +134,25 @@
 <div class="app-shell">
     
     <div id="p1" class="page active">
-        <div class="hero-icon">
-            <i class="fas fa-briefcase"></i>
-        </div>
-        <h2 style="color: var(--primary-dark); margin-top: 20px;">حقيبتي الذكية</h2>
-        <p style="color: #64748b; line-height: 1.6;">تكنولوجيا تمنحك الراحة والذكاء في كل خطوة مدرسية.</p>
-        <button class="btn" onclick="nextPage(2)">ابدأ</button>
+        <div class="hero-icon"><i class="fas fa-briefcase"></i></div>
+        <h2 style="color: var(--deep-blue); margin-top: 25px;">حقيبتي الذكية</h2>
+        <p style="color: #486581; line-height: 1.6;">تكنولوجيا تمنحك الراحة والذكاء في كل خطوة مدرسية.</p>
+        <button class="btn" style="margin-top: auto; margin-bottom: 40px;" onclick="nextPage(2)">ابدأ</button>
     </div>
 
     <div id="p2" class="page">
-        <h3 style="color: var(--primary);">بياناتك</h3>
+        <h3 style="color: var(--royal-blue); margin-top: 30px;">بياناتك</h3>
         <input type="number" id="user_age" placeholder="أدخل عمرك">
         <input type="number" id="user_weight" placeholder="وزنك الشخصي (كيلو جرام)">
         <button class="btn" onclick="nextPage(3)">التالي</button>
     </div>
 
     <div id="p3" class="page">
-        <h3 style="color: var(--primary);">حقيبتك المدرسية 👇</h3>
-        
+        <h3 style="color: var(--royal-blue);">حقيبتك المدرسية 👇</h3>
         <a href="https://smart-bag-pro.base44.app/" target="_blank" class="btn" 
-           style="background: #f1f5f9; color: var(--primary); border: 2px dashed var(--primary); width: 80%;">
+           style="background: white; color: var(--tech-blue); border: 2.5px dashed var(--tech-blue); width: 80%;">
            <i class="fas fa-external-link-alt"></i> فتح الجدول الدراسي
         </a>
-
-        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 10px;">اختر اليوم والوزن الحالي:</p>
-
         <select id="day_select">
             <option value="">اختر اليوم الدراسي</option>
             <option value="sun">الأحد</option>
@@ -156,49 +161,36 @@
             <option value="wed">الأربعاء</option>
             <option value="thu">الخميس</option>
         </select>
-        
         <input type="number" id="bag_weight" placeholder="وزن الحقيبة (كيلو جرام)">
-        
         <button class="btn" onclick="calculateLogic()">تحليل الوزن الذكي</button>
     </div>
 
     <div id="p4" class="page">
-        <h3 style="color: var(--primary);">النتيجة النهائية</h3>
-        
+        <h3 style="color: var(--deep-blue);">التقرير النهائي</h3>
         <div id="statusResult" class="status-badge">
-            <div id="mainStatus" style="font-weight: bold; font-size: 1.3rem;">--</div>
-            <div id="subStatus" style="font-size: 0.9rem; margin-top: 5px;">--</div>
+            <div id="mainStatus" style="font-weight: 800; font-size: 1.4rem;">--</div>
+            <div id="subStatus" style="font-size: 0.95rem; margin-top: 6px; opacity: 0.9;">--</div>
         </div>
-
-        <div class="info-card">
-            <i class="fab fa-bluetooth" style="color: #2563eb;"></i> متصل بنظام الحقيبة
-        </div>
-
+        <div class="info-card"><i class="fab fa-bluetooth" style="color: var(--tech-blue);"></i> متصل بنظام الحقيبة</div>
         <div class="info-card" style="border-right: 4px solid var(--danger);">
             <i class="fas fa-map-marker-alt" style="color: var(--danger);"></i>
-            <div style="text-align: right;">
-                <strong>الموقع الحالي:</strong> حي الصهاريج
-            </div>
+            <div style="text-align: right;"><strong>الموقع:</strong> حي الصهاريج</div>
         </div>
-
-        <div class="info-card" style="justify-content: space-around;">
-            <span><i class="fas fa-walking"></i> 1,240 خطوة</span>
+        <div class="info-card" style="justify-content: space-around; background: var(--deep-blue); color: white;">
+            <span><i class="fas fa-walking"></i> 1,240</span>
             <span><i class="fas fa-fire-alt"></i> 85 سعرة</span>
         </div>
-
-        <button class="btn" style="background:var(--primary)" onclick="nextPage(1)">إعادة الفحص</button>
+        <button class="btn" style="background: var(--tech-blue); margin-top: auto; margin-bottom: 20px;" onclick="nextPage(1)">إعادة الفحص</button>
     </div>
 
 </div>
 
 <script>
     const idealWeights = { 'sun': 3.1, 'mon': 3.1, 'tue': 2.3, 'wed': 2.8, 'thu': 2.2 };
-
     function nextPage(num) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById('p' + num).classList.add('active');
     }
-
     function calculateLogic() {
         const uW = parseFloat(document.getElementById('user_weight').value);
         const bW = parseFloat(document.getElementById('bag_weight').value);
@@ -206,35 +198,21 @@
         const box = document.getElementById('statusResult');
         const main = document.getElementById('mainStatus');
         const sub = document.getElementById('subStatus');
-
         if(!uW || !bW || !day) { alert("يرجى إكمال البيانات"); return; }
-
         const dayIdeal = idealWeights[day];
         box.classList.remove('shake-anim');
-
         if (bW <= dayIdeal) {
-            main.innerHTML = "وزن مثالي ✅";
-            sub.innerHTML = "حقيبتك متوافقة مع الجدول";
-            box.style.background = "var(--success)";
-        } 
-        else if (bW > dayIdeal && bW <= dayIdeal + 1.0) {
-            main.innerHTML = "جيدة نوعاً ما ⚠️";
-            sub.innerHTML = "يرجى تعديل الحقيبة";
-            box.style.background = "var(--warning)";
-            void box.offsetWidth;
-            box.classList.add('shake-anim');
-        } 
-        else {
-            main.innerHTML = "خطرة جداً ❌";
-            sub.innerHTML = "يجب تعديل الحقيبة فوراً";
-            box.style.background = "var(--danger)";
-            void box.offsetWidth;
-            box.classList.add('shake-anim');
+            main.innerHTML = "وزن مثالي ✅"; sub.innerHTML = "حقيبتك متوافقة مع الجدول"; box.style.background = "var(--success)";
+        } else if (bW > dayIdeal && bW <= dayIdeal + 1.0) {
+            main.innerHTML = "جيدة نوعاً ما ⚠️"; sub.innerHTML = "يرجى تعديل الحقيبة"; box.style.background = "var(--warning)";
+            void box.offsetWidth; box.classList.add('shake-anim');
+        } else {
+            main.innerHTML = "خطرة جداً ❌"; sub.innerHTML = "يجب تعديل الحقيبة فوراً"; box.style.background = "var(--danger)";
+            void box.offsetWidth; box.classList.add('shake-anim');
         }
         nextPage(4);
         setTimeout(() => box.classList.remove('shake-anim'), 2000);
     }
 </script>
-
 </body>
 </html>
